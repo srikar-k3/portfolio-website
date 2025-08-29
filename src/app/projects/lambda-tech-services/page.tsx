@@ -182,7 +182,7 @@ export default function LambdaTechServices() {
             <div>
               <h3 className="text-4xl font-semibold text-black mb-6">WEBSITE DESIGN</h3>
               <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                Designed and prototyped a comprehensive website experience that showcases Lambda Tech Services' technical capabilities while maintaining user-friendly navigation and clear service communication.
+                Designed and prototyped a comprehensive website experience that showcases Lambda Tech Services&apos; technical capabilities while maintaining user-friendly navigation and clear service communication.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed mb-4">
                 Created detailed wireframes and interactive prototypes that guided the development process, ensuring seamless user experience across all devices and touchpoints.
