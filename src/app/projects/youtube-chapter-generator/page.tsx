@@ -76,10 +76,10 @@ export default function YouTubeChapterGenerator() {
               <div className="mb-8">
                 <h4 className="text-2xl font-medium text-gray-700 mb-4">Problem</h4>
                 <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                  YouTube's automatic captioning and chapter tools suffer from poor accuracy and generate generic, unhelpful chapter titles that fail to capture the actual content flow. Creators have no control over the automated process, resulting in chapters that don't reflect their content strategy or audience needs.
+                  YouTube&apos;s automatic captioning and chapter tools suffer from poor accuracy and generate generic, unhelpful chapter titles that fail to capture the actual content flow. Creators have no control over the automated process, resulting in chapters that don&apos;t reflect their content strategy or audience needs.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                  The workflow problem is compounded for multilingual creators: existing chapter generation tools only accept English input, while YouTube's auto-translation produces inaccurate results that hurt discoverability. This forces creators to choose between authentic content in their native language or optimized English metadata for broader reach.
+                  The workflow problem is compounded for multilingual creators: existing chapter generation tools only accept English input, while YouTube&apos;s auto-translation produces inaccurate results that hurt discoverability. This forces creators to choose between authentic content in their native language or optimized English metadata for broader reach.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed">
                   Manual chapter creation remains time-intensive and impractical for regular content production, while fully automated solutions lack the nuance and accuracy that quality content demands. Creators need a solution that combines automation efficiency with human oversight and control.
@@ -211,7 +211,7 @@ export default function YouTubeChapterGenerator() {
               <div>
                 <h4 className="text-2xl font-medium text-gray-700 mb-4">AI & CLOUD</h4>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  Leverages AWS Transcribe for multi-language audio processing and Google's Gemini AI for advanced natural language understanding and chapter optimization.
+                  Leverages AWS Transcribe for multi-language audio processing and Google&apos;s Gemini AI for advanced natural language understanding and chapter optimization.
                 </p>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function YouTubeChapterGenerator() {
                   <ul className="list-disc pl-6 mt-2 space-y-2">
                     <li>Allow users to choose their own ASR system for transcription (AWS Transcribe, Whisper, etc.).</li>
                     <li>Let them pair that with their preferred LLM (Gemini, OpenAI, local models, etc.) for chapter generation.</li>
-                    <li>Distribute with simple CLI or Docker setup so it's easy to run locally.</li>
+                    <li>Distribute with simple CLI or Docker setup so it&apos;s easy to run locally.</li>
                   </ul>
                 </li>
                 <li>

@@ -65,7 +65,7 @@ export default function RutgersSAPA() {
               <div>
                 <h3 className="text-4xl font-semibold text-black mb-6 text-center md:text-left">OVERVIEW</h3>
                 <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                  As Tech Chair and Dancer for Rutgers SAPA, I led comprehensive brand identity and digital content creation for the nationally competing dance team. This multifaceted role combined creative design, strategic marketing, and video production to elevate the team's competitive presence.
+                  As Tech Chair and Dancer for Rutgers SAPA, I led comprehensive brand identity and digital content creation for the nationally competing dance team. This multifaceted role combined creative design, strategic marketing, and video production to elevate the team&apos;s competitive presence.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed mb-4">
                   The project encompassed strategic Instagram branding with progressive reveal campaigns, complete merchandise design collections, Soundcloud cover art, and cinematographic video production using professional editing software.
@@ -151,14 +151,14 @@ export default function RutgersSAPA() {
                   Directed, produced, and edited cinematographic Introduction and Background Videos for both 2024 and 2025 competition seasons using Adobe Premiere Pro and After Effects.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                  Each video was crafted to build narrative tension and showcase the team's technical abilities while maintaining the mysterious elements essential to competition strategy.
+                  Each video was crafted to build narrative tension and showcase the team&apos;s technical abilities while maintaining the mysterious elements essential to competition strategy.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  The production quality and cinematic approach significantly enhanced the team's stage presence and competitive impact during performances.
+                  The production quality and cinematic approach significantly enhanced the team&apos;s stage presence and competitive impact during performances.
                 </p>
                 <blockquote className="border-l-4 border-gray-300 pl-6 mb-4">
                   <p className="text-xl text-gray-700 font-medium italic mb-2">
-                    "Great production with the [background] video, really high quality. It adds to your impact in every segment."
+                    &quot;Great production with the [background] video, really high quality. It adds to your impact in every segment.&quot;
                   </p>
                   <cite className="text-gray-600 font-medium">
                     — Harji Charaia, Legends 2025 Judge
@@ -301,7 +301,7 @@ export default function RutgersSAPA() {
                 Themes are central to the reveal experience and generate significant anticipation before official debuts. I implemented carefully timed progression of design elements throughout the feed, building visual intrigue while preserving the surprise element. Despite incorporating distinctive fonts, colors, and design assets, the actual theme was never guessed beforehand by the audience.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                This strategic approach maintained audience engagement throughout the competition season while creating a cohesive visual narrative that enhanced the team's professional image.
+                This strategic approach maintained audience engagement throughout the competition season while creating a cohesive visual narrative that enhanced the team&apos;s professional image.
               </p>
             </div>
             {/* Interactive Instagram Grid */}
@@ -424,7 +424,7 @@ export default function RutgersSAPA() {
             <div>
               <h3 className="text-4xl font-semibold text-black mb-6">SOUNDCLOUD COVERS</h3>
               <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                Created two custom Soundcloud track covers for the 2025 season, with our set theme inspired by Mad Max: Fury Road. I incorporated visual elements and assets from the film's iconic marketing materials, creating unique covers that capture the post-apocalyptic energy while maintaining the team's visual identity.
+                Created two custom Soundcloud track covers for the 2025 season, with our set theme inspired by Mad Max: Fury Road. I incorporated visual elements and assets from the film&apos;s iconic marketing materials, creating unique covers that capture the post-apocalyptic energy while maintaining the team&apos;s visual identity.
               </p>
             </div>
           </motion.section>

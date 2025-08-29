@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface NavigationProps {
   className?: string;
 }
@@ -10,14 +12,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
       <div className="w-full">
         <div className="flex items-center pl-6 md:pl-8">
           <div className="flex space-x-8">
-            <a 
+            <Link 
               href="/" 
               className="text-black hover:text-gray-600 transition-colors duration-200 font-medium"
             >
               Home
-            </a>
-            <a 
-              href="/#projects" 
+            </Link>
+            <button 
               className="text-black hover:text-gray-600 transition-colors duration-200 font-medium"
               onClick={(e) => {
                 e.preventDefault();
@@ -39,15 +40,14 @@ export default function Navigation({ className = '' }: NavigationProps) {
               }}
             >
               Projects
-            </a>
-            <a 
+            </button>
+            <Link 
               href="/about" 
               className="text-black hover:text-gray-600 transition-colors duration-200 font-medium"
             >
               About
-            </a>
-            <a 
-              href="/#contact" 
+            </Link>
+            <button 
               className="text-black hover:text-gray-600 transition-colors duration-200 font-medium"
               onClick={(e) => {
                 e.preventDefault();
@@ -69,7 +69,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
               }}
             >
               Contact
-            </a>
+            </button>
           </div>
         </div>
       </div>
