@@ -246,7 +246,7 @@ export default function HouseRules() {
           <div className="relative">
             {/* Progress Line */}
             <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200"></div>
-            <div className="absolute top-6 left-0 h-1 bg-black" style={{width: '40%'}}></div>
+            <div className="absolute top-6 left-0 h-1 bg-black" style={{width: '60%'}}></div>
             
             {/* Progress Steps */}
             <div className="flex justify-between relative">
@@ -261,10 +261,10 @@ export default function HouseRules() {
                 </div>
               </div>
               
-              {/* Development/Testing (Xcode) - Current */}
+              {/* Development/Testing (Xcode) - Completed */}
               <div className="flex flex-col items-center">
                 <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
-                  <div className="w-4 h-4 rounded-full bg-white animate-pulse"></div>
+                  <div className="w-4 h-4 rounded-full bg-white"></div>
                 </div>
                 <div className="text-center">
                   <h4 className="font-medium text-black text-lg mb-1">DEVELOPMENT</h4>
@@ -272,14 +272,14 @@ export default function HouseRules() {
                 </div>
               </div>
               
-              {/* Apple App Review - Pending */}
+              {/* Apple App Review - Current */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-4">
-                  <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
+                  <div className="w-4 h-4 rounded-full bg-white animate-pulse"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-gray-400 text-lg mb-1">APP REVIEW</h4>
-                  <p className="text-gray-400 text-sm">Apple</p>
+                  <h4 className="font-medium text-black text-lg mb-1">APP REVIEW</h4>
+                  <p className="text-gray-500 text-sm">Apple</p>
                 </div>
               </div>
               
