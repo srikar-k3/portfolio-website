@@ -30,8 +30,7 @@ export default function AboutSection() {
           </p>
           <p className="text-gray-600 text-lg leading-relaxed mt-6">
           What sets me apart is my ability to take projects from initial concept to shipped product. I design user flows, 
-          create interactive prototypes, develop design systems, and then build the actual applications, all while collaborating 
-          effectively with development teams in Agile environments. Whether I&apos;m directing video content with custom 3D environments, 
+          create interactive prototypes, develop design systems, and then build the actual applications. Whether I&apos;m directing video content with custom 3D environments, 
           designing merchandise collections, or crafting brand campaigns, I believe the best solutions emerge when design strategy 
           meets technical capability, creating experiences that not only look beautiful but drive meaningful user engagement.
           </p>
