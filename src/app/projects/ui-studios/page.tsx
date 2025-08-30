@@ -34,7 +34,7 @@ export default function UIStudios() {
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <Image 
-            src="/thumbnail_v2.png" 
+            src="/thumbnail_V2.png" 
             alt="U&I Studios Brand Identity Showcase" 
             width={1920} 
             height={1080}
