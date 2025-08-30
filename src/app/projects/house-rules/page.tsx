@@ -273,63 +273,63 @@ export default function HouseRules() {
           {/* Progress Bar */}
           <div className="relative">
             {/* Progress Line */}
-            <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200"></div>
-            <div className="absolute top-6 left-0 h-1 bg-black" style={{width: '60%'}}></div>
+            <div className="absolute top-6 left-0 right-0 h-1 bg-gray-700"></div>
+            <div className="absolute top-6 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500" style={{width: '60%'}}></div>
             
             {/* Progress Steps */}
             <div className="flex justify-between relative">
               {/* Design (Figma) - Completed */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mb-4">
                   <div className="w-4 h-4 rounded-full bg-white"></div>
                 </div>
                 <div className="text-center">
                   <h4 className="font-medium text-white text-lg mb-1">DESIGN</h4>
-                  <p className="text-gray-500 text-sm">Figma</p>
+                  <p className="text-gray-400 text-sm">Figma</p>
                 </div>
               </div>
               
               {/* Development/Testing (Xcode) - Completed */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mb-4">
                   <div className="w-4 h-4 rounded-full bg-white"></div>
                 </div>
                 <div className="text-center">
                   <h4 className="font-medium text-white text-lg mb-1">DEVELOPMENT</h4>
-                  <p className="text-gray-500 text-sm">Xcode</p>
+                  <p className="text-gray-400 text-sm">Xcode</p>
                 </div>
               </div>
               
               {/* Apple App Review - Current */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mb-4">
                   <div className="w-4 h-4 rounded-full bg-white animate-pulse"></div>
                 </div>
                 <div className="text-center">
                   <h4 className="font-medium text-white text-lg mb-1">APP REVIEW</h4>
-                  <p className="text-gray-500 text-sm">Apple</p>
+                  <p className="text-gray-400 text-sm">Apple</p>
                 </div>
               </div>
               
               {/* Beta Testing (TestFlight) - Pending */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center mb-4">
                   <div className="w-4 h-4 rounded-full bg-gray-400"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-gray-400 text-lg mb-1">BETA TESTING</h4>
-                  <p className="text-gray-400 text-sm">TestFlight</p>
+                  <h4 className="font-medium text-gray-500 text-lg mb-1">BETA TESTING</h4>
+                  <p className="text-gray-500 text-sm">TestFlight</p>
                 </div>
               </div>
               
               {/* App Store - Pending */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center mb-4">
                   <div className="w-4 h-4 rounded-full bg-gray-400"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-gray-400 text-lg mb-1">LAUNCH</h4>
-                  <p className="text-gray-400 text-sm">App Store</p>
+                  <h4 className="font-medium text-gray-500 text-lg mb-1">LAUNCH</h4>
+                  <p className="text-gray-500 text-sm">App Store</p>
                 </div>
               </div>
             </div>

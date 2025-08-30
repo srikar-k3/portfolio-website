@@ -14,12 +14,27 @@ export default function Navigation({ className = '' }: NavigationProps) {
   const [isNavigating, setIsNavigating] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [isOverLightBackground, setIsOverLightBackground] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const controlNavbar = () => {
       if (typeof window !== 'undefined') {
         const currentScrollY = window.scrollY;
+        
+        // Check if nav is over light background (YouTube Chapter Generator page hero)
+        const path = window.location.pathname;
+        const isYouTubePage = path.includes('/youtube-chapter-generator');
+        
+        if (isYouTubePage) {
+          // Hero section is exactly h-screen (100vh)
+          // Dark section starts right after the hero ends
+          const heroSectionHeight = window.innerHeight;
+          const isOverHero = currentScrollY < heroSectionHeight - 100; // Small buffer for smooth transition
+          setIsOverLightBackground(isOverHero);
+        } else {
+          setIsOverLightBackground(false);
+        }
         
         // Always show at the top of the page or if navigating
         const isHashNavigating = window.sessionStorage.getItem('navigatingToSection') === 'true';
@@ -44,6 +59,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', controlNavbar);
+      controlNavbar(); // Check initial state
       
       return () => {
         window.removeEventListener('scroll', controlNavbar);
@@ -69,11 +85,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
       }}
     >
       <nav 
-        className="py-6 rounded-xl shadow-lg relative overflow-hidden"
+        className="py-6 rounded-xl shadow-lg relative overflow-hidden transition-all duration-500"
         style={{
-          background: 'rgba(255, 255, 255, 0.08)',
+          background: isOverLightBackground ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.08)',
           backdropFilter: 'blur(15px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)'
+          border: isOverLightBackground ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.15)'
         }}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
@@ -98,13 +114,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
             <div className="flex space-x-8">
             <Link 
               href="/" 
-              className="text-white hover:text-gray-300 transition-colors duration-200 font-medium relative group"
+              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group`}
             >
               <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
               <span className="relative">Home</span>
             </Link>
             <button 
-              className="text-white hover:text-gray-300 transition-colors duration-200 font-medium relative group cursor-pointer"
+              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer`}
               onClick={(e) => {
                 e.preventDefault();
                 setIsNavigating(true);
@@ -131,13 +147,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
             </button>
             <Link 
               href="/about" 
-              className="text-white hover:text-gray-300 transition-colors duration-200 font-medium relative group"
+              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group`}
             >
               <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
               <span className="relative">About</span>
             </Link>
             <button 
-              className="text-white hover:text-gray-300 transition-colors duration-200 font-medium relative group cursor-pointer"
+              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer`}
               onClick={(e) => {
                 e.preventDefault();
                 setIsNavigating(true);
