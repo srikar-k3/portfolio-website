@@ -13,26 +13,24 @@ export default function AboutSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
         {/* Header Text */}
         <div className="md:order-1">
-          <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight uppercase text-center md:text-left">
+          <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight uppercase text-center md:text-left">
             About me as a creator
           </h2>
         </div>
 
         {/* Blurb Text */}
         <div className="md:order-2">
-          <p className="text-gray-600 text-lg leading-relaxed">
-          I&apos;m a visual and product designer who builds what I design. From crafting comprehensive brand identities 
-          and design systems to developing the Swift apps and React applications that bring them to life, I create 
-          end-to-end digital experiences that solve real user problems while maintaining visual excellence. 
-          My approach combines strategic design thinking with technical execution, whether that&apos;s wireframing iOS interfaces, 
-          designing color palettes and typography systems, or implementing AI-powered web applications with modern tech stacks.
-
+          <p className="text-gray-400 text-lg leading-relaxed">
+          I am a visual and product designer with the technical expertise to build the solutions I design. My work ranges 
+          from creating brand identities and design systems to developing Swift applications and React platforms that bring 
+          those designs to life. I focus on end-to-end digital experiences that solve real user needs while maintaining a high 
+          standard of visual craft.
           </p>
-          <p className="text-gray-600 text-lg leading-relaxed mt-6">
-          What sets me apart is my ability to take projects from initial concept to shipped product. I design user flows, 
-          create interactive prototypes, develop design systems, and then build the actual applications. Whether I&apos;m directing video content with custom 3D environments, 
-          designing merchandise collections, or crafting brand campaigns, I believe the best solutions emerge when design strategy 
-          meets technical capability, creating experiences that not only look beautiful but drive meaningful user engagement.
+          <p className="text-gray-400 text-lg leading-relaxed mt-6">
+          What sets me apart is the ability to carry a project from concept to launch. I design systems and interactive prototypes
+          and then build the actual applications. Beyond digital products, I have directed video content in custom 3D environments, 
+          designed merchandise collections, and led brand campaigns. In every case, my goal is to merge design and technology to 
+          create experiences that are visually compelling and meaningfully engaging.
           </p>
         </div>
       </div>

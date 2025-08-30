@@ -10,11 +10,21 @@ import Image from 'next/image';
 export default function HouseRules() {
   const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
   const [scrollY, setScrollY] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
   
   const features = [
@@ -33,7 +43,25 @@ export default function HouseRules() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen text-white relative" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+      {/* Subtle noise overlay */}
+      <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+      }}></div>
+      
+      {/* Global mouse glow effect - behind all content */}
+      <div
+        className="fixed pointer-events-none z-0 transition-opacity duration-300"
+        style={{
+          left: mousePos.x - 75,
+          top: mousePos.y - 75,
+          width: 150,
+          height: 150,
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
+          borderRadius: '50%',
+          filter: 'blur(30px)',
+        }}
+      />
       {/* Navigation */}
       <Navigation />
       
@@ -42,7 +70,7 @@ export default function HouseRules() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full h-[calc(100vh-80px)] overflow-hidden"
+        className="w-full h-screen overflow-hidden"
       >
         <div 
           className="h-full"
@@ -71,28 +99,28 @@ export default function HouseRules() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="max-w-6xl mx-auto"
             >
-              <h3 className="text-4xl font-semibold text-black mb-8 text-center">APP OVERVIEW</h3>
+              <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP OVERVIEW</h3>
               
               <div className="mb-8">
-                <h4 className="text-2xl font-medium text-gray-700 mb-4">Problem</h4>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <h4 className="text-2xl font-medium text-gray-300 mb-4">Problem</h4>
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 In on-campus housing, roommate agreements are required at move-in to outline expectations around cleaning, guests, and shared spaces. In practice, these agreements are treated as paperwork that is quickly forgotten. With no follow-up, rules lose meaning, boundaries fade, and tensions gradually build.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 Off-campus housing typically has no agreements at all. Roommates depend on vague verbal understandings that are difficult to enforce or even recall. When issues come up around chores, noise, bills, or guests, there is no accountability, and conflicts often remain unresolved.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-400 text-lg leading-relaxed">
                 Chores, in particular, are a recurring flashpoint. Without a structured way to assign and track responsibilities, they are either forgotten, unevenly distributed, or casually passed off, creating resentment among housemates. Over time, these small breakdowns compound, straining roommate relationships and making shared living more stressful than it needs to be.
                 </p>
               </div>
               
               <div>
-                <h4 className="text-2xl font-medium text-gray-700 mb-4">Solution</h4>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <h4 className="text-2xl font-medium text-gray-300 mb-4">Solution</h4>
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 House Rules is not a replacement for conversation; it is a tool that supports and sustains it. By keeping roommate agreements active through timely reminders and flexible chore management, the app creates a foundation for healthier discussions where accountability is shared and responsibility is clear.
 
                 </p>
-                {/* <p className="text-gray-600 text-lg leading-relaxed">
+                {/* <p className="text-gray-400 text-lg leading-relaxed">
                 The app emphasizes accountability through social systems designed for real-life situations: bumping chores that need urgent attention, passing tasks when someone is unavailable, and tracking reliability across houses over time. This structure reduces ambiguity, sets transparent expectations, and gives roommates a constructive framework for resolving issues before they escalate.
                 </p> */}
               </div>
@@ -158,16 +186,16 @@ export default function HouseRules() {
               </div> */}
 
               <div>
-                <h3 className="text-4xl font-semibold text-black mb-6 text-center md:text-left">KEY FEATURES</h3>
+                <h3 className="text-4xl font-semibold text-white mb-6 text-center md:text-left">KEY FEATURES</h3>
                 <div className="space-y-4">
                   {features.map((feature, index) => (
                     <div 
                       key={index}
                       onMouseEnter={() => setActiveFeatureIndex(index)}
-                      className="cursor-pointer transition-all duration-300 hover:bg-gray-50 p-4 -m-4 rounded-lg"
+                      className="cursor-pointer transition-all duration-300 hover:bg-white/5 p-4 -m-4 rounded-lg"
                     >
-                      <h4 className="text-2xl font-medium text-gray-700 mb-2">{feature.title}</h4>
-                      <p className="text-gray-600 text-lg leading-relaxed">
+                      <h4 className="text-2xl font-medium text-gray-300 mb-2">{feature.title}</h4>
+                      <p className="text-gray-400 text-lg leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -184,23 +212,23 @@ export default function HouseRules() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-24 text-center"
           >
-            <h3 className="text-4xl font-semibold text-black mb-8">TECHNICAL STACK</h3>
+            <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
             <div className="grid md:grid-cols-3 gap-12">
               <div>
-                <h4 className="text-2xl font-medium text-gray-700 mb-4">FRONTEND</h4>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <h4 className="text-2xl font-medium text-gray-300 mb-4">FRONTEND</h4>
+                <p className="text-gray-400 text-lg leading-relaxed">
                   Built natively for iOS using Swift and SwiftUI, providing a seamless and responsive user experience optimized for mobile devices.
                 </p>
               </div>
               <div>
-                <h4 className="text-2xl font-medium text-gray-700 mb-4">BACKEND</h4>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <h4 className="text-2xl font-medium text-gray-300 mb-4">BACKEND</h4>
+                <p className="text-gray-400 text-lg leading-relaxed">
                   Firebase handles real-time data synchronization, user authentication, and cloud storage, ensuring reliable performance and instant updates across all devices.
                 </p>
               </div>
               <div>
-                <h4 className="text-2xl font-medium text-gray-700 mb-4">ARCHITECTURE</h4>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <h4 className="text-2xl font-medium text-gray-300 mb-4">ARCHITECTURE</h4>
+                <p className="text-gray-400 text-lg leading-relaxed">
                 Designed with an MVVM-inspired structure, where SwiftUI views bind to observable view models connected to Firestore and Cloud Functions, enabling clean data flow and real-time updates.
                 </p>
               </div>
@@ -217,7 +245,7 @@ export default function HouseRules() {
         transition={{ duration: 0.6, delay: 0.8 }}
         className="mt-8 mb-16"
       >
-        <h3 className="text-4xl font-semibold text-black mb-8 text-center">APP ICON DESIGN</h3>
+        <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP ICON DESIGN</h3>
         
         <div className="bg-white aspect-[7/2] overflow-hidden">
           <Image 
@@ -240,7 +268,7 @@ export default function HouseRules() {
         className="pt-4 pb-16"
       >
         <div className="max-w-6xl mx-auto px-6 md:px-12">
-          <h3 className="text-4xl font-semibold text-black text-center mb-16">COMING SOON TO APP STORE</h3>
+          <h3 className="text-4xl font-semibold text-white text-center mb-16">COMING SOON TO APP STORE</h3>
           
           {/* Progress Bar */}
           <div className="relative">
@@ -256,7 +284,7 @@ export default function HouseRules() {
                   <div className="w-4 h-4 rounded-full bg-white"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-black text-lg mb-1">DESIGN</h4>
+                  <h4 className="font-medium text-white text-lg mb-1">DESIGN</h4>
                   <p className="text-gray-500 text-sm">Figma</p>
                 </div>
               </div>
@@ -267,7 +295,7 @@ export default function HouseRules() {
                   <div className="w-4 h-4 rounded-full bg-white"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-black text-lg mb-1">DEVELOPMENT</h4>
+                  <h4 className="font-medium text-white text-lg mb-1">DEVELOPMENT</h4>
                   <p className="text-gray-500 text-sm">Xcode</p>
                 </div>
               </div>
@@ -278,7 +306,7 @@ export default function HouseRules() {
                   <div className="w-4 h-4 rounded-full bg-white animate-pulse"></div>
                 </div>
                 <div className="text-center">
-                  <h4 className="font-medium text-black text-lg mb-1">APP REVIEW</h4>
+                  <h4 className="font-medium text-white text-lg mb-1">APP REVIEW</h4>
                   <p className="text-gray-500 text-sm">Apple</p>
                 </div>
               </div>

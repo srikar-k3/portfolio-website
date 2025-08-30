@@ -5,14 +5,44 @@ import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export default function About() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen text-white relative" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+      {/* Subtle noise overlay */}
+      <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+      }}></div>
+      
+      {/* Global mouse glow effect - behind all content */}
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          left: mousePos.x - 75,
+          top: mousePos.y - 75,
+          width: 150,
+          height: 150,
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
+          borderRadius: '50%',
+          filter: 'blur(30px)',
+        }}
+      />
       {/* Navigation */}
       <Navigation />
       
-      <main className="px-6 md:px-12">
+      <main className="px-6 md:px-12 pt-32">
         <div className="max-w-6xl mx-auto py-12">
           {/* About Section */}
           <AboutSection />
@@ -28,58 +58,58 @@ export default function About() {
             <div>
               {/* Education */}
               <div className="mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold text-black uppercase mb-6">Education</h2>
-                <h3 className="text-2xl font-medium text-gray-700 mb-4">Rutgers School of Arts and Sciences</h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-2">
+                <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Education</h2>
+                <h3 className="text-2xl font-medium text-gray-300 mb-4">Rutgers School of Arts and Sciences</h3>
+                <p className="text-gray-400 text-lg leading-relaxed mb-2">
                   Major in Computer Science (B.S.)
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-400 text-lg leading-relaxed">
                   Minors in Business Administration, Cognitive Science, and Philosophy
                 </p>
               </div>
 
               {/* Experience */}
               <div>
-                <h2 className="text-4xl md:text-5xl font-bold text-black uppercase mb-6">Experience</h2>
+                <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Technical Skills</h2>
                 
                 {/* Development */}
                 <div className="mb-6">
-                  <h3 className="text-2xl font-medium text-gray-700 mb-3">Software Development</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">iOS Development</p>
-                  <p className="text-gray-600 text-lg leading-relaxed">Web Development</p>
+                  <h3 className="text-2xl font-medium text-gray-300 mb-3">Software Development</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">iOS Development</p>
+                  <p className="text-gray-400 text-lg leading-relaxed">Web Development</p>
                 </div>
 
                 {/* Product Design */}
                 <div className="mb-6">
-                  <h3 className="text-2xl font-medium text-gray-700 mb-3">Product Design</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">User Research & Strategy</p>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Wireframing & Prototyping</p>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">UI/UX Design</p>
-                  <p className="text-gray-600 text-lg leading-relaxed">Design Systems</p>
+                  <h3 className="text-2xl font-medium text-gray-300 mb-3">Product Design</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">User Research & Strategy</p>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Wireframing & Prototyping</p>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">UI/UX Design</p>
+                  <p className="text-gray-400 text-lg leading-relaxed">Design Systems</p>
                 </div>
 
                 {/* Visual Design */}
                 <div className="mb-6">
-                  <h3 className="text-2xl font-medium text-gray-700 mb-3">Visual Design</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Brand Identity & Logo Design</p>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Typography & Color Systems</p>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Graphic Design</p>
-                  <p className="text-gray-600 text-lg leading-relaxed">Marketing & Social Content</p>
+                  <h3 className="text-2xl font-medium text-gray-300 mb-3">Visual Design</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Brand Identity & Logo Design</p>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Typography & Color Systems</p>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Graphic Design</p>
+                  <p className="text-gray-400 text-lg leading-relaxed">Marketing & Social Content</p>
                 </div>
 
                 {/* Video Production */}
                 <div>
-                  <h3 className="text-2xl font-medium text-gray-700 mb-3">Video Production</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Filming</p>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-1">Post-Production</p>
-                  <p className="text-gray-600 text-lg leading-relaxed">Motion Graphics & Animations</p>
+                  <h3 className="text-2xl font-medium text-gray-300 mb-3">Video Production</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Filming</p>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-1">Post-Production</p>
+                  <p className="text-gray-400 text-lg leading-relaxed">Motion Graphics & Animations</p>
                 </div>
               </div>
             </div>
 
             {/* Right Column - Tools */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-black uppercase mb-6">Software & Tools</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Software & Tools</h2>
               <div className="space-y-12">
                 {/* Row 1: swift xcode firebase */}
                 <div className="flex gap-6 items-center">

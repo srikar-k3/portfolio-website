@@ -51,11 +51,11 @@ export default function ContactSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 1.4 }}
-      className="mb-20"
+      className="mb-20 pt-12"
     >
       {/* Section Title */}
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold text-black uppercase">Contact</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Contact</h2>
       </div>
 
       {/* Contact Form */}
@@ -81,7 +81,7 @@ export default function ContactSection() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full text-xl md:text-2xl font-light text-black bg-transparent border-0 outline-none placeholder-gray-400"
+                  className="w-full text-xl md:text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400"
                   placeholder="Your name"
                 />
               </div>
@@ -98,7 +98,7 @@ export default function ContactSection() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full text-xl md:text-2xl font-light text-black bg-transparent border-0 outline-none placeholder-gray-400"
+                  className="w-full text-xl md:text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400"
                   placeholder="your@email.com"
                 />
               </div>
@@ -122,7 +122,7 @@ export default function ContactSection() {
               onChange={handleChange}
               required
               rows={4}
-              className="w-full text-2xl font-light text-black bg-transparent border-0 outline-none placeholder-gray-400 resize-none"
+              className="w-full text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400 resize-none"
               placeholder="Your message..."
             />
           </motion.div>
@@ -137,10 +137,10 @@ export default function ContactSection() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group flex items-center justify-between w-full py-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex items-center justify-between w-full py-6 border-b border-gray-200 hover:bg-white/5 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {/* Left - Action */}
-              <h3 className="text-2xl md:text-4xl font-normal text-black group-hover:text-gray-700 transition-colors duration-200 flex-shrink-0">
+              <h3 className="text-2xl md:text-4xl font-normal text-white group-hover:text-gray-300 transition-colors duration-200 flex-shrink-0">
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </h3>
               

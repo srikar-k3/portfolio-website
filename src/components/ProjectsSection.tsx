@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface ProjectCardProps {
   title: string;
@@ -15,16 +16,53 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ title, subtitle, description, imageSrc, delay, slug, index }: ProjectCardProps) {
+  const [mousePos, setMousePos] = useState({ x: -200, y: -200 }); // Start offscreen
+  const [isHovered, setIsHovered] = useState(false);
+
   const content = (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="group flex flex-col md:flex-row md:items-center md:justify-between py-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+      className="group relative flex flex-col md:flex-row md:items-center md:justify-between py-6 border-b border-gray-700 cursor-pointer overflow-hidden"
+      data-project-item
+      style={{ transition: 'background 400ms ease-out' }}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePos({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        });
+      }}
+      onMouseEnter={(e) => {
+        setIsHovered(true);
+        e.currentTarget.style.background = `linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.025) 50%, rgba(255, 255, 255, 0.02) 100%)`;
+      }}
+      onMouseLeave={(e) => {
+        setIsHovered(false);
+        e.currentTarget.style.background = 'transparent';
+      }}
     >
+      {/* Mouse glow effect */}
+      <div 
+        className="absolute pointer-events-none"
+        style={{
+          left: mousePos.x - 75,
+          top: mousePos.y - 75,
+          width: 150,
+          height: 150,
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
+          borderRadius: '50%',
+          filter: 'blur(30px)',
+          opacity: isHovered ? 1 : 0,
+          zIndex: 1,
+          transition: 'opacity 300ms ease-out'
+        }}
+      />
+      
       {/* Mobile Layout */}
       <div className="flex items-center justify-between md:hidden mb-2">
-        <h3 className="text-2xl font-normal text-black group-hover:text-gray-700 transition-colors duration-200">
+        <h3 className="text-2xl font-normal text-white transition-colors duration-200">
           {title}
         </h3>
         <div className="text-xl font-light text-gray-400">
@@ -32,19 +70,19 @@ function ProjectCard({ title, subtitle, description, imageSrc, delay, slug, inde
         </div>
       </div>
       <div className="md:hidden">
-        <h4 className="text-sm text-gray-600 uppercase tracking-wide">{subtitle}</h4>
+        <h4 className="text-sm text-gray-400 uppercase tracking-wide">{subtitle}</h4>
       </div>
       
       {/* Desktop Layout */}
-      <h3 className="hidden md:block text-4xl font-normal text-black group-hover:text-gray-700 transition-colors duration-200 flex-shrink-0">
+      <h3 className="hidden md:block text-4xl font-normal text-white transition-colors duration-200 flex-shrink-0">
         {title}
       </h3>
       
       <div className="hidden md:block flex-1 mx-8">
-        <h4 className="text-lg text-gray-600 uppercase tracking-wide">{subtitle}</h4>
+        <h4 className="text-lg text-gray-400 uppercase tracking-wide">{subtitle}</h4>
       </div>
       
-      <div className="hidden md:block text-2xl font-light text-gray-400 flex-shrink-0">
+      <div className="hidden md:block text-2xl font-light text-gray-500 flex-shrink-0">
         0{index + 1}
       </div>
     </motion.div>
@@ -99,11 +137,11 @@ export default function ProjectsSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.4 }}
-      className="mb-20"
+      className="mb-20 pt-12"
     >
       {/* Section Title */}
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold text-black uppercase">Projects</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Projects</h2>
       </div>
 
       {/* Project List */}

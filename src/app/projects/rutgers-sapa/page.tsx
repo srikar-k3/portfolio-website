@@ -10,6 +10,7 @@ import Image from 'next/image';
 export default function RutgersSAPA() {
   const [scrollY, setScrollY] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
   const exportImages = [
     '/Export_Varun-20250419143334.jpg',
@@ -24,8 +25,35 @@ export default function RutgersSAPA() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen text-white relative" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+      {/* Subtle noise overlay */}
+      <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+      }}></div>
+
+      {/* Global mouse glow effect - behind all content */}
+      <div
+        className="fixed pointer-events-none z-0 transition-opacity duration-300"
+        style={{
+          left: mousePos.x - 75,
+          top: mousePos.y - 75,
+          width: 150,
+          height: 150,
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
+          borderRadius: '50%',
+          filter: 'blur(30px)',
+        }}
+      />
       {/* Navigation */}
       <Navigation />
       
@@ -34,7 +62,7 @@ export default function RutgersSAPA() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full h-[calc(100vh-80px)] overflow-hidden"
+        className="w-full h-screen overflow-hidden"
       >
         <div 
           className="h-full"
@@ -63,18 +91,18 @@ export default function RutgersSAPA() {
               className="grid md:grid-cols-2 gap-16 items-center"
             >
               <div>
-                <h3 className="text-4xl font-semibold text-black mb-6 text-center md:text-left">OVERVIEW</h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <h3 className="text-4xl font-semibold text-white mb-6 text-center md:text-left">OVERVIEW</h3>
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                   As Tech Chair and Dancer for Rutgers SAPA, I led comprehensive brand identity and digital content creation for the nationally competing dance team. This multifaceted role combined creative design, strategic marketing, and video production to elevate the team&apos;s competitive presence.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                   The project encompassed strategic Instagram branding with progressive reveal campaigns, complete merchandise design collections, Soundcloud cover art, and cinematographic video production using professional editing software.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-400 text-lg leading-relaxed">
                   Each element was designed to build anticipation for competition seasons while maintaining brand consistency across all digital and physical touchpoints.
                 </p>
               </div>
-              <div className="aspect-[4/3] bg-white rounded-lg overflow-hidden">
+              <div className="bg-black rounded-lg overflow-hidden">
                 <Image 
                   src="/legendsPoster.jpg" 
                   alt="SAPA Team Overview - Legends Poster" 
@@ -132,7 +160,7 @@ export default function RutgersSAPA() {
                   onClick={() => setCurrentImageIndex((prev) => 
                     prev === 0 ? exportImages.length - 1 : prev - 1
                   )}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/50 hover:bg-white/75 text-black p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
                   ←
                 </button>
@@ -140,27 +168,27 @@ export default function RutgersSAPA() {
                   onClick={() => setCurrentImageIndex((prev) => 
                     prev === exportImages.length - 1 ? 0 : prev + 1
                   )}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/50 hover:bg-white/75 text-black p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
                   →
                 </button>
               </div>
               <div>
-                <h3 className="text-4xl font-semibold text-black mb-6">VIDEO PRODUCTION</h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <h3 className="text-4xl font-semibold text-white mb-6">VIDEO PRODUCTION</h3>
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                   Directed, produced, and edited cinematographic Introduction and Background Videos for both 2024 and 2025 competition seasons using Adobe Premiere Pro and After Effects.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                <p className="text-gray-400 text-lg leading-relaxed mb-4">
                   Each video was crafted to build narrative tension and showcase the team&apos;s technical abilities while maintaining the mysterious elements essential to competition strategy.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                <p className="text-gray-400 text-lg leading-relaxed mb-6">
                   The production quality and cinematic approach significantly enhanced the team&apos;s stage presence and competitive impact during performances.
                 </p>
                 <blockquote className="border-l-4 border-gray-300 pl-6 mb-4">
-                  <p className="text-xl text-gray-700 font-medium italic mb-2">
+                  <p className="text-xl text-gray-300 font-medium italic mb-2">
                     &quot;Great production with the [background] video, really high quality. It adds to your impact in every segment.&quot;
                   </p>
-                  <cite className="text-gray-600 font-medium">
+                  <cite className="text-gray-400 font-medium">
                     — Harji Charaia, Legends 2025 Judge
                   </cite>
                 </blockquote>
@@ -175,7 +203,7 @@ export default function RutgersSAPA() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-24"
           >
-            <h3 className="text-4xl font-semibold text-black mb-4 text-center">MERCHANDISE DESIGN</h3>
+            <h3 className="text-4xl font-semibold text-white mb-4 text-center">MERCHANDISE DESIGN</h3>
           </motion.section>
         </div>
       </main>
@@ -191,7 +219,7 @@ export default function RutgersSAPA() {
           
           {/* 2025 Collection */}
           <div>
-            <h4 className="text-2xl font-semibold text-black mb-6 text-center">2025 COLLECTION</h4>
+            <h4 className="text-2xl font-semibold text-white mb-6 text-center">2025 COLLECTION</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               
               {/* 2025 Team */}
@@ -205,8 +233,8 @@ export default function RutgersSAPA() {
                     className="w-full h-auto object-contain"
                   />
                 </div>
-                <h5 className="text-lg font-medium text-black mb-1">TEAM UNIFORM</h5>
-                <p className="text-sm text-gray-600 text-center">Competition Uniform</p>
+                <h5 className="text-lg font-medium text-white mb-1">TEAM UNIFORM</h5>
+                <p className="text-sm text-gray-400 text-center">Competition Uniform</p>
               </div>
 
               {/* 2025 Crewneck */}
@@ -220,8 +248,8 @@ export default function RutgersSAPA() {
                     className="w-full h-auto object-contain"
                   />
                 </div>
-                <h5 className="text-lg font-medium text-black mb-1">CREWNECK</h5>
-                <p className="text-sm text-gray-600 text-center">Casual Wear</p>
+                <h5 className="text-lg font-medium text-white mb-1">CREWNECK</h5>
+                <p className="text-sm text-gray-400 text-center">Casual Wear</p>
               </div>
 
               {/* 2025 T-Shirt */}
@@ -235,8 +263,8 @@ export default function RutgersSAPA() {
                     className="w-full h-auto object-contain"
                   />
                 </div>
-                <h5 className="text-lg font-medium text-black mb-1">T-SHIRT</h5>
-                <p className="text-sm text-gray-600 text-center">Casual Wear</p>
+                <h5 className="text-lg font-medium text-white mb-1">T-SHIRT</h5>
+                <p className="text-sm text-gray-400 text-center">Casual Wear</p>
               </div>
 
             </div>
@@ -244,7 +272,7 @@ export default function RutgersSAPA() {
 
           {/* 2024 Collection */}
           <div>
-            <h4 className="text-2xl font-semibold text-black mb-6 text-center">2024 COLLECTION</h4>
+            <h4 className="text-2xl font-semibold text-white mb-6 text-center">2024 COLLECTION</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               
               {/* 2024 Team */}
@@ -258,8 +286,8 @@ export default function RutgersSAPA() {
                     className="w-full h-auto object-contain"
                   />
                 </div>
-                <h5 className="text-lg font-medium text-black mb-1">TEAM UNIFORM</h5>
-                <p className="text-sm text-gray-600 text-center">Competition Uniform</p>
+                <h5 className="text-lg font-medium text-white mb-1">TEAM UNIFORM</h5>
+                <p className="text-sm text-gray-400 text-center">Competition Uniform</p>
               </div>
 
               {/* 2024 Casual */}
@@ -273,8 +301,8 @@ export default function RutgersSAPA() {
                     className="w-full h-auto object-contain"
                   />
                 </div>
-                <h5 className="text-lg font-medium text-black mb-1">CREWNECK</h5>
-                <p className="text-sm text-gray-600 text-center">Casual Wear</p>
+                <h5 className="text-lg font-medium text-white mb-1">CREWNECK</h5>
+                <p className="text-sm text-gray-400 text-center">Casual Wear</p>
               </div>
 
             </div>
@@ -293,14 +321,14 @@ export default function RutgersSAPA() {
             className="py-16 grid md:grid-cols-2 gap-16 items-center"
           >
             <div>
-              <h3 className="text-4xl font-semibold text-black mb-6">INSTAGRAM STRATEGY</h3>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">
+              <h3 className="text-4xl font-semibold text-white mb-6">INSTAGRAM STRATEGY</h3>
+              <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 Developed and executed strategic Instagram branding for competition seasons, focusing on progressive reveal campaigns that build anticipation without disclosing themes too early.
               </p>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">
+              <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 Themes are central to the reveal experience and generate significant anticipation before official debuts. I implemented carefully timed progression of design elements throughout the feed, building visual intrigue while preserving the surprise element. Despite incorporating distinctive fonts, colors, and design assets, the actual theme was never guessed beforehand by the audience.
               </p>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-400 text-lg leading-relaxed">
                 This strategic approach maintained audience engagement throughout the competition season while creating a cohesive visual narrative that enhanced the team&apos;s professional image.
               </p>
             </div>
@@ -374,7 +402,7 @@ export default function RutgersSAPA() {
                       href="https://on.soundcloud.com/46rLiomQzyzw2zZCGS" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200"
+                      className="bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
                     >
                       Listen on SoundCloud
                     </a>
@@ -413,7 +441,7 @@ export default function RutgersSAPA() {
                       href="https://on.soundcloud.com/bjATpbuUGyDZIujJSj" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200"
+                      className="bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
                     >
                       Listen on SoundCloud
                     </a>
@@ -422,8 +450,8 @@ export default function RutgersSAPA() {
               </div>
             </div>
             <div>
-              <h3 className="text-4xl font-semibold text-black mb-6">SOUNDCLOUD COVERS</h3>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">
+              <h3 className="text-4xl font-semibold text-white mb-6">SOUNDCLOUD COVERS</h3>
+              <p className="text-gray-400 text-lg leading-relaxed mb-4">
                 Created two custom Soundcloud track covers for the 2025 season, with our set theme inspired by Mad Max: Fury Road. I incorporated visual elements and assets from the film&apos;s iconic marketing materials, creating unique covers that capture the post-apocalyptic energy while maintaining the team&apos;s visual identity.
               </p>
             </div>

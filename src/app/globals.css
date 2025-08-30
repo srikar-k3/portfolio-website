@@ -51,3 +51,8 @@ body {
   font-weight: 300;
   color: #000000;
 }
+
+/* Radial gradient utility for navigation hover effects */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
