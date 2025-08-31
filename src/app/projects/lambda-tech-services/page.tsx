@@ -179,22 +179,22 @@ export default function LambdaTechServices() {
           >
             <h3 className="text-4xl font-semibold text-white mb-12 text-center">TYPOGRAPHY</h3>
             <div className="grid md:grid-cols-2 gap-12">
-              <div className="bg-gray-50 p-8 rounded-lg">
-                <h4 className="text-2xl font-medium text-gray-300 mb-6">Primary Font</h4>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 rounded-lg">
+                <h4 className="text-2xl font-medium text-white mb-6">Primary Font</h4>
                 <div className="space-y-4">
                   <div className="text-4xl font-bold text-white">Inter Bold</div>
-                  <div className="text-2xl font-semibold text-gray-300">Inter Semibold</div>
-                  <div className="text-lg font-medium text-gray-400">Inter Medium</div>
-                  <div className="text-base font-normal text-gray-500">Inter Regular</div>
+                  <div className="text-2xl font-semibold text-gray-200">Inter Semibold</div>
+                  <div className="text-lg font-medium text-gray-300">Inter Medium</div>
+                  <div className="text-base font-normal text-gray-400">Inter Regular</div>
                 </div>
               </div>
-              <div className="bg-gray-50 p-8 rounded-lg">
-                <h4 className="text-2xl font-medium text-gray-300 mb-6">Usage Guidelines</h4>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 rounded-lg">
+                <h4 className="text-2xl font-medium text-white mb-6">Usage Guidelines</h4>
                 <div className="space-y-3">
-                  <p className="text-gray-400 text-sm"><span className="font-semibold">Headlines:</span> Inter Bold, 32-48px</p>
-                  <p className="text-gray-400 text-sm"><span className="font-semibold">Subheadings:</span> Inter Semibold, 20-28px</p>
-                  <p className="text-gray-400 text-sm"><span className="font-semibold">Body Text:</span> Inter Regular, 16-18px</p>
-                  <p className="text-gray-400 text-sm"><span className="font-semibold">Captions:</span> Inter Medium, 12-14px</p>
+                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Headlines:</span> Inter Bold, 32-48px</p>
+                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Subheadings:</span> Inter Semibold, 20-28px</p>
+                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Body Text:</span> Inter Regular, 16-18px</p>
+                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Captions:</span> Inter Medium, 12-14px</p>
                 </div>
               </div>
             </div>
