@@ -22,11 +22,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
       if (typeof window !== 'undefined') {
         const currentScrollY = window.scrollY;
         
-        // Check if nav is over light background (YouTube Chapter Generator page hero)
+        // Check if nav is over light background (pages with light hero sections)
         const path = window.location.pathname;
         const isYouTubePage = path.includes('/youtube-chapter-generator');
+        const isSapaPage = path.includes('/rutgers-sapa');
+        const hasLightHero = isYouTubePage || isSapaPage;
         
-        if (isYouTubePage) {
+        if (hasLightHero) {
           // Hero section is exactly h-screen (100vh)
           // Dark section starts right after the hero ends
           const heroSectionHeight = window.innerHeight;
