@@ -42,17 +42,12 @@ export default function Navigation({ className = '' }: NavigationProps) {
         const isHashNavigating = window.sessionStorage.getItem('navigatingToSection') === 'true';
         if (currentScrollY < 100 || isNavigating || isHashNavigating) {
           setIsVisible(true);
-        } else if (currentScrollY > lastScrollY + 5) {
-          // Scrolling down (with threshold)
+        } else if (!isNavigating && currentScrollY > lastScrollY + 10) {
+          // Only hide if NOT navigating and scrolling down significantly
           setIsVisible(false);
         } else if (currentScrollY < lastScrollY - 5) {
           // Scrolling up (requires scroll up to appear)
           setIsVisible(true);
-        }
-        
-        // Clear navigation flag after scroll settles
-        if (isNavigating && Math.abs(currentScrollY - lastScrollY) < 5) {
-          setTimeout(() => setIsNavigating(false), 1000);
         }
         
         setLastScrollY(currentScrollY);
@@ -77,6 +72,15 @@ export default function Navigation({ className = '' }: NavigationProps) {
     });
   };
 
+  const handleNavigation = () => {
+    setIsNavigating(true);
+    setIsVisible(true); // Force navbar to be visible
+    // Keep navbar visible longer during navigation
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 2000);
+  };
+
   return (
     <div 
       className={`w-full fixed top-0 z-50 p-4 transition-transform duration-500 ${
@@ -89,8 +93,8 @@ export default function Navigation({ className = '' }: NavigationProps) {
       <nav 
         className="py-6 rounded-xl shadow-lg relative overflow-hidden transition-all duration-500"
         style={{
-          background: isOverLightBackground ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(15px)',
+          background: isOverLightBackground ? 'rgba(0, 0, 0, 0.07)' : 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(12px)',
           border: isOverLightBackground ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.15)'
         }}
         onMouseMove={handleMouseMove}
@@ -112,78 +116,82 @@ export default function Navigation({ className = '' }: NavigationProps) {
           }}
         />
         <div className="w-full">
-          <div className="flex items-center pl-6 md:pl-8">
-            <div className="flex space-x-8">
+          <div className="flex items-center justify-between pl-6 md:pl-8 pr-6 md:pr-8">
+            {/* Logo on left */}
             <Link 
               href="/" 
-              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group`}
+              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-bold text-xl relative group`}
+              onClick={handleNavigation}
             >
               <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
-              <span className="relative">Home</span>
+              <span className="relative">srkr.</span>
             </Link>
-            <button 
-              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer`}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsNavigating(true);
-                const element = document.getElementById('projects');
-                if (element) {
-                  // If on home page, scroll to projects
-                  const navHeight = 80; // Account for nav and padding
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                  const offsetPosition = elementPosition - navHeight;
-                  
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                } else {
-                  // If not on home page, navigate to home page with projects anchor
-                  window.sessionStorage.setItem('navigatingToSection', 'true');
-                  router.push('/#projects');
-                }
-              }}
-            >
-              <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
-              <span className="relative">Projects</span>
-            </button>
-            <Link 
-              href="/about" 
-              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group`}
-            >
-              <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
-              <span className="relative">About</span>
-            </Link>
-            <button 
-              className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer`}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsNavigating(true);
-                const element = document.getElementById('contact');
-                if (element) {
-                  // If on home page, scroll to contact
-                  const navHeight = 80; // Account for nav and padding
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                  const offsetPosition = elementPosition - navHeight;
-                  
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                } else {
-                  // If not on home page, navigate to home page with contact anchor
-                  window.sessionStorage.setItem('navigatingToSection', 'true');
-                  router.push('/#contact');
-                }
-              }}
-            >
-              <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
-              <span className="relative">Contact</span>
-            </button>
+            
+            {/* Nav items on right */}
+            <div className="flex items-center space-x-8">
+              <Link 
+                href="/about" 
+                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group font-sans`}
+                onClick={handleNavigation}
+              >
+                <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
+                <span className="relative">About</span>
+              </Link>
+              <button 
+                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer font-sans`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigation();
+                  const element = document.getElementById('projects');
+                  if (element) {
+                    // If on home page, scroll to projects
+                    const navHeight = 80; // Account for nav and padding
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - navHeight;
+                    
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  } else {
+                    // If not on home page, navigate to home page with projects anchor
+                    window.sessionStorage.setItem('navigatingToSection', 'true');
+                    router.push('/#projects');
+                  }
+                }}
+              >
+                <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
+                <span className="relative">Projects</span>
+              </button>
+              <button 
+                className="bg-white text-black font-medium px-3 py-1 rounded-md hover:bg-gray-100 transition-colors duration-300 cursor-pointer font-sans"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigation();
+                  const element = document.getElementById('contact');
+                  if (element) {
+                    // If on home page, scroll to contact
+                    const navHeight = 80; // Account for nav and padding
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - navHeight;
+                    
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  } else {
+                    // If not on home page, navigate to home page with contact anchor
+                    window.sessionStorage.setItem('navigatingToSection', 'true');
+                    router.push('/#contact');
+                  }
+                }}
+              >
+                Contact
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
     </div>
   );
 }

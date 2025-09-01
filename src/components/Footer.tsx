@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-6 md:space-y-0">
           {/* Left - Portfolio Name */}
           <div>
-            <h3 className="text-xl font-medium text-white">Srikar Kandulapati © 2025</h3>
+            <h3 className="text-xl font-medium text-white">Srikar Kandulapati 2025</h3>
           </div>
 
           {/* Right - LinkedIn */}

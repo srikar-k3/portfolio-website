@@ -35,7 +35,7 @@ export default function RutgersSAPA() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
   return (
-    <div className="min-h-screen text-white relative" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+    <div className="min-h-screen text-white relative w-full max-w-full overflow-x-hidden" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
       {/* Subtle noise overlay */}
       <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -62,7 +62,7 @@ export default function RutgersSAPA() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full h-screen overflow-hidden"
+        className="w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
       >
         <div 
           className="h-full"
@@ -120,25 +120,23 @@ export default function RutgersSAPA() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="grid md:grid-cols-2 gap-16 items-center"
             >
-              <div className="aspect-[4/3] rounded-lg overflow-hidden relative group">
-                <div className="relative w-full h-full">
-                  {exportImages.map((image, index) => (
-                    <div
-                      key={image}
-                      className={`absolute inset-0 transition-opacity duration-300 ${
-                        index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    >
-                      <Image 
-                        src={image}
-                        alt={`Video Production Screenshot ${index + 1}`}
-                        width={800}
-                        height={600}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="bg-black rounded-lg overflow-hidden relative group aspect-square">
+                {exportImages.map((image, index) => (
+                  <div
+                    key={image}
+                    className={`${index === 0 ? 'block' : 'absolute inset-0'} transition-opacity duration-300 ${
+                      index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    <Image 
+                      src={image}
+                      alt={`Video Production Screenshot ${index + 1}`}
+                      width={800}
+                      height={600}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                ))}
                 
                 {/* Navigation dots */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -175,15 +173,20 @@ export default function RutgersSAPA() {
               </div>
               <div>
                 <h3 className="text-4xl font-semibold text-white mb-6">VIDEO PRODUCTION</h3>
-                <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                  Directed, produced, and edited cinematographic Introduction and Background Videos for both 2024 and 2025 competition seasons using Adobe Premiere Pro and After Effects.
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                  Each video was crafted to build narrative tension and showcase the team&apos;s technical abilities while maintaining the mysterious elements essential to competition strategy.
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                  The production quality and cinematic approach significantly enhanced the team&apos;s stage presence and competitive impact during performances.
-                </p>
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <h4 className="text-2xl font-medium text-gray-300 mb-4">Introduction Videos</h4>
+                    <p className="text-gray-400 text-lg leading-relaxed">
+                      Wrote, storyboarded, directed, and edited multi-year cinematic openings for the 2024 and 2025 competition seasons, setting the theme and narrative tone for each performance. These short films introduced the concept, built anticipation, and elevated the team's stage presence.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-medium text-gray-300 mb-4">Background Videos</h4>
+                    <p className="text-gray-400 text-lg leading-relaxed">
+                      Designed and produced synchronized visuals that played behind live performances, with each segment tailored to the style and energy of the dance piece. This required layering custom assets, integrating motion graphics, and balancing color, mood, and lighting to amplify choreography and atmosphere.
+                    </p>
+                  </div>
+                </div>
                 <blockquote className="border-l-4 border-gray-300 pl-6 mb-4">
                   <p className="text-xl text-gray-300 font-medium italic mb-2">
                     &quot;Great production with the [background] video, really high quality. It adds to your impact in every segment.&quot;

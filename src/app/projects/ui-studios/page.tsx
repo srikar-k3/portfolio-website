@@ -28,7 +28,7 @@ export default function UIStudios() {
   }, []);
 
   return (
-    <div className="min-h-screen text-white relative" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+    <div className="min-h-screen text-white relative w-full max-w-full overflow-x-hidden" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
       {/* Subtle noise overlay */}
       <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -55,7 +55,7 @@ export default function UIStudios() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full h-screen overflow-hidden"
+        className="w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
       >
         <div 
           className="h-full"
@@ -92,13 +92,13 @@ export default function UIStudios() {
                   From logo design to video editing, every element was crafted to reflect the human experience of immigration while maintaining professional standards for interview content distribution and audience engagement.
                 </p>
               </div>
-              <div className="bg-black aspect-[4/3] rounded-lg overflow-hidden flex items-center justify-center">
+              <div className="bg-black aspect-square rounded-lg overflow-hidden flex items-center justify-center">
                 <Image 
                   src="/u&i_white_logo_trans.png" 
                   alt="U&I Studios Logo" 
                   width={400} 
                   height={400}
-                  className="w-auto h-auto max-w-full max-h-full object-contain"
+                  className="w-4/5 h-4/5 object-contain"
                 />
               </div>
             </motion.div>

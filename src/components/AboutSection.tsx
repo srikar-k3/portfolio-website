@@ -21,16 +21,10 @@ export default function AboutSection() {
         {/* Blurb Text */}
         <div className="md:order-2">
           <p className="text-gray-400 text-lg leading-relaxed">
-          I am a visual and product designer with the technical expertise to build the solutions I design. My work ranges 
-          from creating brand identities and design systems to developing Swift applications and React platforms that bring 
-          those designs to life. I focus on end-to-end digital experiences that solve real user needs while maintaining a high 
-          standard of visual craft.
+          I design digital products and the systems that support them, and I have the technical skills to bring those ideas to life. My work has ranged from brand identities and design systems to developing Swift apps and React platforms, always with a focus on creating experiences that are both useful and visually refined.
           </p>
           <p className="text-gray-400 text-lg leading-relaxed mt-6">
-          What sets me apart is the ability to carry a project from concept to launch. I design systems and interactive prototypes
-          and then build the actual applications. Beyond digital products, I have directed video content in custom 3D environments, 
-          designed merchandise collections, and led brand campaigns. In every case, my goal is to merge design and technology to 
-          create experiences that are visually compelling and meaningfully engaging.
+          Alongside product design, I've also worked in filmmaking and media, where I've developed skills in visual storytelling, directing, and building complex motion and 3D environments. Those projects taught me how to shape a narrative, balance creative direction with technical execution, and craft visuals that carry the right mood and energy. Whether I'm designing an app or producing media, my aim is the same: to merge design and technology in a way that feels thoughtful, engaging, and built with care.
           </p>
         </div>
       </div>

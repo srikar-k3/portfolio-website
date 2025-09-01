@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-figtree);
+  --font-nunito-sans: var(--font-nunito-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,10 +19,18 @@
   }
 }
 
-body {
+html, body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-figtree), system-ui, sans-serif;
+  font-family: var(--font-nunito-sans), sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure headings use Figtree */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-figtree), sans-serif;
 }
 
 /* Business card design - clean and minimal like real paper cards */

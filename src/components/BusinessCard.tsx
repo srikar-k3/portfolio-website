@@ -51,8 +51,8 @@ export default function BusinessCard() {
                 className="absolute inset-0 rounded-xl shadow-lg flex items-center justify-center p-8"
                 style={{ 
                   backfaceVisibility: 'hidden',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(15px)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 255, 255, 0.15)'
                 }}
               >
@@ -84,8 +84,8 @@ export default function BusinessCard() {
                 style={{ 
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(15px)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 255, 255, 0.15)'
                 }}
               >

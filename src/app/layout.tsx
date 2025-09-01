@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Figtree } from "next/font/google";
+import { Figtree, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
+});
+
+const nunitoSans = Nunito_Sans({
+  variable: "--font-nunito-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -20,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* Google Analytics */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FEBY07XY8L"></script>
         <script
@@ -34,7 +41,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${figtree.variable} antialiased`}
+        className={`${figtree.variable} ${nunitoSans.variable} antialiased`}
       >
         {children}
       </body>
