@@ -137,15 +137,15 @@ export default function ProjectsSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.4 }}
-      className="mb-20 pt-12"
+      className="min-h-screen flex flex-col py-20"
     >
       {/* Section Title */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-6 pt-16 sm:pt-20 md:pt-24 lg:pt-32 xl:pt-[20vh]">
         <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Projects</h2>
       </div>
 
       {/* Project List */}
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-6xl mx-auto flex-1">
         {projects.map((project, index) => (
           <ProjectCard
             key={index}

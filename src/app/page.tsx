@@ -50,12 +50,11 @@ export default function Home() {
       // Immediate scroll without animation to prevent flash
       const element = document.getElementById(hash.substring(1));
       if (element) {
-        const navHeight = 100; // Navigation offset for hash navigation
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - navHeight;
+        const navbarHeight = document.querySelector('nav')?.getBoundingClientRect().height || 100;
         
         window.scrollTo({
-          top: offsetPosition,
+          top: elementPosition + navbarHeight,
           behavior: 'instant'
         });
       }
@@ -67,7 +66,7 @@ export default function Home() {
     }
   }, []);
   return (
-    <div className="min-h-screen text-white relative w-full max-w-full overflow-x-hidden" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
+    <div className="min-h-screen text-white relative w-full" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
       {/* Subtle noise overlay */}
       <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -90,7 +89,7 @@ export default function Home() {
       {/* Navigation */}
       <Navigation />
       
-      <main className="px-6 md:px-12 pt-32">
+      <main className="px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
           {/* Floating Business Card */}
           <BusinessCard />

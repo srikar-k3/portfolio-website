@@ -87,18 +87,17 @@ export default function HouseRules() {
         </div>
       </motion.section>
 
-      <main className="px-6 md:px-12">
-        <div className="max-w-6xl mx-auto py-24">
-
-          {/* Alternating Content Sections */}
-          <div className="space-y-24">
+      <main>
+        {/* Alternating Content Sections */}
+        <div>
             {/* Row 1: App Overview */}
-            <motion.div
+            <motion.section
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-6xl mx-auto"
+              className="min-h-screen flex items-center px-6 md:px-12 py-20"
             >
+              <div className="max-w-6xl mx-auto w-full">
               <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP OVERVIEW</h3>
               
               <div className="mb-8">
@@ -124,15 +123,17 @@ export default function HouseRules() {
                 The app emphasizes accountability through social systems designed for real-life situations: bumping chores that need urgent attention, passing tasks when someone is unavailable, and tracking reliability across houses over time. This structure reduces ambiguity, sets transparent expectations, and gives roommates a constructive framework for resolving issues before they escalate.
                 </p> */}
               </div>
-            </motion.div>
+              </div>
+            </motion.section>
 
             {/* Row 2: Carousel (Left) + Key Features (Right) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid md:grid-cols-2 gap-16 items-center"
+              className="px-6 md:px-12"
             >
+              <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
               {/* Features Image */}
               <div className="aspect-[4/3] rounded-lg overflow-hidden">
                 <Image 
@@ -202,6 +203,7 @@ export default function HouseRules() {
                   ))}
                 </div>
               </div>
+              </div>
             </motion.div>
           </div>
 
@@ -235,19 +237,17 @@ export default function HouseRules() {
             </div>
           </motion.section>
 
-        </div>
-      </main>
-
-      {/* App Icon Design - Title + Full Width Image */}
-      <motion.section
+        {/* App Icon Design - Title + Full Width Image */}
+        <motion.section
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="mt-8 mb-16"
+        className="mt-8 mb-16 px-6 md:px-12"
       >
-        <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP ICON DESIGN</h3>
-        
-        <div className="bg-white aspect-[7/2] overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP ICON DESIGN</h3>
+          
+          <div className="bg-white aspect-[7/2] overflow-hidden">
           <Image 
             src="/house_rules_icon_blue.png" 
             alt="House Rules App Icon Design Blueprint" 
@@ -257,6 +257,7 @@ export default function HouseRules() {
             priority
             className="w-full h-full object-cover"
           />
+          </div>
         </div>
       </motion.section>
 
@@ -265,9 +266,9 @@ export default function HouseRules() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.2 }}
-        className="pt-4 pb-16"
+        className="pt-4 pb-16 px-6 md:px-12"
       >
-        <div className="max-w-6xl mx-auto px-6 md:px-12">
+        <div className="max-w-6xl mx-auto">
           <h3 className="text-4xl font-semibold text-white text-center mb-16">COMING SOON TO APP STORE</h3>
           
           {/* Progress Bar */}
@@ -336,6 +337,7 @@ export default function HouseRules() {
           </div>
         </div>
       </motion.section>
+      </main>
       
       {/* Footer */}
       <Footer />

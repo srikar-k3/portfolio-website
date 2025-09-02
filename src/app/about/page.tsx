@@ -42,8 +42,8 @@ export default function About() {
       {/* Navigation */}
       <Navigation />
       
-      <main className="px-6 md:px-12 pt-32">
-        <div className="max-w-6xl mx-auto py-12">
+      <main className="px-6 md:px-12 pt-8">
+        <div className="max-w-6xl mx-auto">
           {/* About Section */}
           <AboutSection />
 
@@ -52,7 +52,7 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid md:grid-cols-2 gap-12 mt-16"
+            className="grid md:grid-cols-2 gap-12 mt-16 mb-20"
           >
             {/* Left Column */}
             <div>

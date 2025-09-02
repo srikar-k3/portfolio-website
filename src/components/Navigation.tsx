@@ -145,12 +145,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
                   const element = document.getElementById('projects');
                   if (element) {
                     // If on home page, scroll to projects
-                    const navHeight = 80; // Account for nav and padding
                     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                    const offsetPosition = elementPosition - navHeight;
+                    const navbarHeight = document.querySelector('nav')?.getBoundingClientRect().height || 100;
                     
                     window.scrollTo({
-                      top: offsetPosition,
+                      top: elementPosition + navbarHeight,
                       behavior: 'smooth'
                     });
                   } else {
@@ -171,12 +170,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
                   const element = document.getElementById('contact');
                   if (element) {
                     // If on home page, scroll to contact
-                    const navHeight = 80; // Account for nav and padding
                     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                    const offsetPosition = elementPosition - navHeight;
+                    const navbarHeight = document.querySelector('nav')?.getBoundingClientRect().height || 100;
                     
                     window.scrollTo({
-                      top: offsetPosition,
+                      top: elementPosition + navbarHeight,
                       behavior: 'smooth'
                     });
                   } else {

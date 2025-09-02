@@ -51,10 +51,10 @@ export default function ContactSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 1.4 }}
-      className="mb-20 pt-12"
+      className="mb-20 py-20"
     >
       {/* Section Title */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-16 pt-16 sm:pt-20 md:pt-24 lg:pt-32 xl:pt-[20vh]">
         <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Contact</h2>
       </div>
 

@@ -8,17 +8,17 @@ export default function AboutSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className="mb-20"
+      className="relative min-h-screen flex items-center py-20"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-        {/* Header Text */}
+      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+        {/* Left Side - Title */}
         <div className="md:order-1">
           <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight uppercase text-center md:text-left">
             About me as a creator
           </h2>
         </div>
 
-        {/* Blurb Text */}
+        {/* Right Side - Paragraph */}
         <div className="md:order-2">
           <p className="text-gray-400 text-lg leading-relaxed">
           I design digital products and the systems that support them, and I have the technical skills to bring those ideas to life. My work has ranged from brand identities and design systems to developing Swift apps and React platforms, always with a focus on creating experiences that are both useful and visually refined.

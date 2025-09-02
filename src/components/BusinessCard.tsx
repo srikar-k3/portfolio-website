@@ -19,8 +19,8 @@ export default function BusinessCard() {
   };
 
   return (
-    <section className="mb-20" data-business-card>
-      <div className="w-full max-w-2xl mx-auto">
+    <section className="min-h-screen flex items-center py-8 px-4" data-business-card>
+      <div className="w-full max-w-sm sm:max-w-lg md:max-w-2xl mx-auto">
         <Tilt
           tiltMaxAngleX={10}
           tiltMaxAngleY={10}
@@ -51,8 +51,8 @@ export default function BusinessCard() {
                 className="absolute inset-0 rounded-xl shadow-lg flex items-center justify-center p-8"
                 style={{ 
                   backfaceVisibility: 'hidden',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(12px)',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(15px)',
                   border: '1px solid rgba(255, 255, 255, 0.15)'
                 }}
               >
@@ -64,9 +64,9 @@ export default function BusinessCard() {
                     filter: 'blur(2px)'
                   }}
                 >
-                  <h2 className="text-2xl font-semibold mb-2 text-white uppercase">Srikar Kandulapati</h2>
+                  <h2 className="text-2xl font-semibold mb-2 text-white">Srikar Kandulapati</h2>
                   <div className="w-12 h-px bg-white mb-4"></div>
-                  <p className="text-base text-gray-400 uppercase tracking-wide mb-6">visual & product designer</p>
+                  <p className="text-base text-gray-300 mb-6">visual & product designer</p>
                   <div className="space-y-2 text-sm text-gray-400">
                     <p>srkandulapati@gmail.com</p>
                     <p>(732) 336 9707</p>
@@ -74,7 +74,7 @@ export default function BusinessCard() {
                 </div>
                 
                 <div className="text-center relative z-10">
-                  <div className="text-lg text-gray-400 uppercase tracking-wide mb-2">portfolio</div>
+                  <div className="text-2xl font-light text-white mb-2">portfolio</div>
                 </div>
               </div>
 
@@ -84,8 +84,8 @@ export default function BusinessCard() {
                 style={{ 
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(12px)',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(15px)',
                   border: '1px solid rgba(255, 255, 255, 0.15)'
                 }}
               >
@@ -97,13 +97,13 @@ export default function BusinessCard() {
                     filter: 'blur(2px)'
                   }}
                 >
-                  <div className="text-lg text-gray-400 uppercase tracking-wide">portfolio</div>
+                  <div className="text-2xl font-light text-white">portfolio</div>
                 </div>
                 
                 <div className="relative z-10">
-                  <h2 className="text-2xl font-semibold mb-2 text-white uppercase">Srikar Kandulapati</h2>
+                  <h2 className="text-2xl font-semibold mb-2 text-white">Srikar Kandulapati</h2>
                   <div className="w-12 h-px bg-white mb-4"></div>
-                  <p className="text-base text-gray-400 uppercase tracking-wide mb-6">visual & product designer</p>
+                  <p className="text-base text-gray-300 mb-6">visual & product designer</p>
                   <div className="space-y-2 text-sm text-gray-400">
                     <p>srkandulapati@gmail.com</p>
                     <p>(732) 336 9707</p>
