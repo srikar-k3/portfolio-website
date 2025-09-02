@@ -1,21 +1,18 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
 interface ProjectCardProps {
   title: string;
   subtitle: string;
-  description: string;
-  imageSrc: string;
   delay: number;
   slug?: string;
   index: number;
 }
 
-function ProjectCard({ title, subtitle, description, imageSrc, delay, slug, index }: ProjectCardProps) {
+function ProjectCard({ title, subtitle, delay, slug, index }: ProjectCardProps) {
   const [mousePos, setMousePos] = useState({ x: -200, y: -200 }); // Start offscreen
   const [isHovered, setIsHovered] = useState(false);
 
@@ -151,8 +148,6 @@ export default function ProjectsSection() {
             key={index}
             title={project.title}
             subtitle={project.subtitle}
-            description={project.description}
-            imageSrc=""
             delay={0.6 + (index * 0.1)}
             slug={project.slug}
             index={index}

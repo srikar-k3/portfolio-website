@@ -3,12 +3,11 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export default function HouseRules() {
-  const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
+  // const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -177,10 +176,8 @@ export default function HouseRules() {
                   {[0, 1, 2].map((index) => (
                     <button
                       key={index}
-                      onClick={() => setActiveFeatureIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                        activeFeatureIndex === index ? 'bg-black' : 'bg-gray-300'
-                      }`}
+                      className={`w-3 h-3 rounded-full transition-colors duration-300 bg-gray-300`}
+                      aria-label={`Carousel dot ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -192,7 +189,7 @@ export default function HouseRules() {
                   {features.map((feature, index) => (
                     <div 
                       key={index}
-                      onMouseEnter={() => setActiveFeatureIndex(index)}
+                      // onMouseEnter={() => setActiveFeatureIndex(index)}
                       className="cursor-pointer transition-all duration-300 hover:bg-white/5 p-4 -m-4 rounded-lg"
                     >
                       <h4 className="text-2xl font-medium text-gray-300 mb-2">{feature.title}</h4>

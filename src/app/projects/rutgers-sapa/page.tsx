@@ -3,7 +3,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -177,7 +176,7 @@ export default function RutgersSAPA() {
                   <div>
                     <h4 className="text-2xl font-medium text-gray-300 mb-4">Introduction Videos</h4>
                     <p className="text-gray-400 text-lg leading-relaxed">
-                      Wrote, storyboarded, directed, and edited multi-year cinematic openings for the 2024 and 2025 competition seasons, setting the theme and narrative tone for each performance. These short films introduced the concept, built anticipation, and elevated the team's stage presence.
+                      Wrote, storyboarded, directed, and edited multi-year cinematic openings for the 2024 and 2025 competition seasons, setting the theme and narrative tone for each performance. These short films introduced the concept, built anticipation, and elevated the team&#39;s stage presence.
                     </p>
                   </div>
                   <div>

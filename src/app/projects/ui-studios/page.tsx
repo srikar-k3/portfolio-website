@@ -3,7 +3,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
@@ -191,28 +190,24 @@ export default function UIStudios() {
               
               // Wait for next frame to ensure image is rendered
               requestAnimationFrame(() => {
-                const imgComputedStyle = window.getComputedStyle(img);
                 const imgNaturalWidth = img.naturalWidth;
                 const imgNaturalHeight = img.naturalHeight;
                 const containerWidth = containerRect.width;
                 const containerHeight = containerRect.height;
-                
-                // Calculate the displayed image dimensions with object-contain
+
+                // Calculate the displayed image width with object-contain
                 const imgAspectRatio = imgNaturalWidth / imgNaturalHeight;
                 const containerAspectRatio = containerWidth / containerHeight;
-                
-                let displayedWidth, displayedHeight;
-                
+
+                let displayedWidth: number;
                 if (imgAspectRatio > containerAspectRatio) {
                   // Image is wider - constrained by container width
                   displayedWidth = containerWidth;
-                  displayedHeight = containerWidth / imgAspectRatio;
                 } else {
-                  // Image is taller - constrained by container height  
-                  displayedHeight = containerHeight;
+                  // Image is taller - constrained by container height
                   displayedWidth = containerHeight * imgAspectRatio;
                 }
-                
+
                 const leftOffset = (containerWidth - displayedWidth) / 2;
                 const rightOffset = leftOffset + displayedWidth;
                 

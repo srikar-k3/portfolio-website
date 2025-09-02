@@ -24,7 +24,7 @@ export default function AboutSection() {
           I design digital products and the systems that support them, and I have the technical skills to bring those ideas to life. My work has ranged from brand identities and design systems to developing Swift apps and React platforms, always with a focus on creating experiences that are both useful and visually refined.
           </p>
           <p className="text-gray-400 text-lg leading-relaxed mt-6">
-          Alongside product design, I've also worked in filmmaking and media, where I've developed skills in visual storytelling, directing, and building complex motion and 3D environments. Those projects taught me how to shape a narrative, balance creative direction with technical execution, and craft visuals that carry the right mood and energy. Whether I'm designing an app or producing media, my aim is the same: to merge design and technology in a way that feels thoughtful, engaging, and built with care.
+          Alongside product design, I&#39;ve also worked in filmmaking and media, where I&#39;ve developed skills in visual storytelling, directing, and building complex motion and 3D environments. Those projects taught me how to shape a narrative, balance creative direction with technical execution, and craft visuals that carry the right mood and energy. Whether I&#39;m designing an app or producing media, my aim is the same: to merge design and technology in a way that feels thoughtful, engaging, and built with care.
           </p>
         </div>
       </div>

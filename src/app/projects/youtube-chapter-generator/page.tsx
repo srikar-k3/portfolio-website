@@ -3,7 +3,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
