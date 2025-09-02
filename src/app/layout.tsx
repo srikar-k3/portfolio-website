@@ -1,17 +1,5 @@
 import type { Metadata } from "next";
-import { Figtree, Nunito_Sans } from "next/font/google";
 import "./globals.css";
-
-const figtree = Figtree({
-  variable: "--font-figtree",
-  subsets: ["latin"],
-});
-
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Srikar Portfolio",
@@ -40,9 +28,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${figtree.variable} ${nunitoSans.variable} antialiased`}
-      >
+      <body className={`antialiased`}>
         {children}
       </body>
     </html>
