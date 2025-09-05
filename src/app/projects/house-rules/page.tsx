@@ -94,7 +94,7 @@ export default function HouseRules() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="min-h-screen flex items-center px-6 md:px-12 py-20"
+              className="min-h-screen flex items-center px-6 md:px-12 py-24"
             >
               <div className="max-w-6xl mx-auto w-full">
               <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP OVERVIEW</h3>
@@ -130,7 +130,7 @@ export default function HouseRules() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="px-6 md:px-12"
+              className="px-6 md:px-12 py-24"
             >
               <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
               {/* Features Image */}
@@ -209,10 +209,11 @@ export default function HouseRules() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-24 text-center"
+            className="mt-24 px-6 md:px-12"
           >
-            <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
-            <div className="grid md:grid-cols-3 gap-12">
+            <div className="max-w-6xl mx-auto text-center">
+              <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
+              <div className="grid md:grid-cols-3 gap-12">
               <div>
                 <h4 className="text-2xl font-medium text-gray-300 mb-4">FRONTEND</h4>
                 <p className="text-gray-400 text-lg leading-relaxed">
@@ -231,6 +232,7 @@ export default function HouseRules() {
                 Designed with an MVVM-inspired structure, where SwiftUI views bind to observable view models connected to Firestore and Cloud Functions, enabling clean data flow and real-time updates.
                 </p>
               </div>
+              </div>
             </div>
           </motion.section>
 
@@ -239,7 +241,7 @@ export default function HouseRules() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="mt-8 mb-16 px-6 md:px-12"
+        className="py-24 px-6 md:px-12"
       >
         <div className="max-w-6xl mx-auto">
           <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP ICON DESIGN</h3>
@@ -263,7 +265,7 @@ export default function HouseRules() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 1.2 }}
-        className="pt-4 pb-16 px-6 md:px-12"
+        className="py-24 px-6 md:px-12"
       >
         <div className="max-w-6xl mx-auto">
           <h3 className="text-4xl font-semibold text-white text-center mb-16">COMING SOON TO APP STORE</h3>

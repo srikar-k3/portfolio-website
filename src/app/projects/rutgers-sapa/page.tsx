@@ -215,7 +215,7 @@ export default function RutgersSAPA() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="w-full mb-16 px-6 md:px-12"
+        className="w-full mb-24 px-6 md:px-12"
       >
         <div className="max-w-6xl mx-auto space-y-12">
           
@@ -370,7 +370,7 @@ export default function RutgersSAPA() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            className="py-16 grid md:grid-cols-2 gap-16 items-center"
+            className="py-24 grid md:grid-cols-2 gap-16 items-center"
           >
             <div className="grid grid-cols-2 gap-4">
               {/* Southie Cover with Vinyl Effect */}

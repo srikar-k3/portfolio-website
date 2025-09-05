@@ -148,7 +148,7 @@ export default function UIStudios() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="w-full mb-16"
+        className="w-full mb-24"
       >
         <div className="bg-black aspect-[3/1] overflow-hidden relative select-none">
           {/* Before Image (Green Screen) - Now as base */}
@@ -252,7 +252,7 @@ export default function UIStudios() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="py-16 grid md:grid-cols-2 gap-16 items-center"
+            className="py-24 grid md:grid-cols-2 gap-16 items-center"
           >
             <div>
               <h3 className="text-4xl font-semibold text-white text-center md:text-left">LIMITATIONS</h3>
@@ -275,7 +275,7 @@ export default function UIStudios() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            className="py-16 grid md:grid-cols-2 gap-16 items-center"
+            className="py-24 grid md:grid-cols-2 gap-16 items-center"
           >
             <div>
               <h3 className="text-4xl font-semibold text-white text-center md:text-left">NEXT STEPS</h3>

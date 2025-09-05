@@ -14,7 +14,7 @@ export default function AboutSection() {
         {/* Left Side - Title */}
         <div className="md:order-1">
           <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight uppercase text-center md:text-left">
-            About me as a creator
+            ABOUT ME AS A CREATOR
           </h2>
         </div>
 

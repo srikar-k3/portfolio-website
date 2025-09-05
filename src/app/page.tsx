@@ -55,7 +55,7 @@ export default function Home() {
         
         window.scrollTo({
           top: elementPosition + navbarHeight,
-          behavior: 'instant'
+          behavior: 'auto'
         });
       }
       

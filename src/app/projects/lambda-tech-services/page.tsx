@@ -139,7 +139,7 @@ export default function LambdaTechServices() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="w-full mb-16"
+        className="w-full mb-24"
       >
         <div className="bg-gray-200 aspect-[4/1] overflow-hidden">
           <div className="w-full h-full flex group">
@@ -174,7 +174,7 @@ export default function LambdaTechServices() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="py-16"
+            className="py-24"
           >
             <h3 className="text-4xl font-semibold text-white mb-12 text-center">TYPOGRAPHY</h3>
             <div className="grid md:grid-cols-2 gap-12">
@@ -204,7 +204,7 @@ export default function LambdaTechServices() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            className="py-16 grid md:grid-cols-2 gap-16 items-center"
+            className="py-24 grid md:grid-cols-2 gap-16 items-center"
           >
             <div>
               <h3 className="text-4xl font-semibold text-white mb-6">WEBSITE DESIGN</h3>
@@ -231,7 +231,7 @@ export default function LambdaTechServices() {
 
         </div>
       </main>
-      *
+      
       {/* Footer */}
       <Footer />
     </div>

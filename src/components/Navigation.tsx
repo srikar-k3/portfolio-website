@@ -16,6 +16,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
   const [isHovering, setIsHovering] = useState(false);
   const [isOverLightBackground, setIsOverLightBackground] = useState(false);
   const router = useRouter();
+  // Always render nav links in lowercase for consistent styling
 
   useEffect(() => {
     const controlNavbar = () => {
@@ -131,14 +132,14 @@ export default function Navigation({ className = '' }: NavigationProps) {
             <div className="flex items-center space-x-8">
               <Link 
                 href="/about" 
-                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group font-sans uppercase`}
+                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group font-sans lowercase`}
                 onClick={handleNavigation}
               >
                 <span className="absolute inset-0 bg-gradient-radial from-white/15 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></span>
                 <span className="relative">About</span>
               </Link>
               <button 
-                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer font-sans uppercase`}
+                className={`${isOverLightBackground ? 'text-black hover:text-gray-700' : 'text-white hover:text-gray-300'} transition-colors duration-500 font-medium relative group cursor-pointer font-sans lowercase`}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavigation();
@@ -163,7 +164,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
                 <span className="relative">Projects</span>
               </button>
               <button 
-                className="bg-white text-black font-medium px-3 py-1 rounded-md hover:bg-gray-100 transition-colors duration-300 cursor-pointer font-sans uppercase"
+                className={`bg-white text-black font-medium px-3 py-1 rounded-md hover:bg-gray-100 transition-colors duration-300 cursor-pointer font-sans lowercase`}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavigation();

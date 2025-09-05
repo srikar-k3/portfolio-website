@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 export default function About() {
@@ -68,19 +68,23 @@ export default function About() {
                 </p>
               </div>
 
-              {/* Experience */}
-              <div>
-                <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Technical Skills</h2>
-                
+              {/* Left column intentionally only shows Education now */}
+            </div>
+
+            {/* Right Column - Technical Skills */}
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Technical Skills</h2>
+
+              <div className="grid md:grid-cols-2 gap-10">
                 {/* Development */}
-                <div className="mb-6">
+                <div>
                   <h3 className="text-2xl font-medium text-gray-300 mb-3 font-nunito-sans">Software Development</h3>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans mb-1 font-nunito-sans">iOS Development</p>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans">Web Development</p>
                 </div>
 
                 {/* Product Design */}
-                <div className="mb-6">
+                <div>
                   <h3 className="text-2xl font-medium text-gray-300 mb-3 font-nunito-sans">Product Design</h3>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans mb-1 font-nunito-sans">User Research & Strategy</p>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans mb-1 font-nunito-sans">Wireframing & Prototyping</p>
@@ -89,7 +93,7 @@ export default function About() {
                 </div>
 
                 {/* Visual Design */}
-                <div className="mb-6">
+                <div>
                   <h3 className="text-2xl font-medium text-gray-300 mb-3 font-nunito-sans">Visual Design</h3>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans mb-1 font-nunito-sans">Brand Identity & Logo Design</p>
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans mb-1 font-nunito-sans">Typography & Color Systems</p>
@@ -105,83 +109,8 @@ export default function About() {
                   <p className="text-gray-400 text-lg leading-relaxed font-nunito-sans">Motion Graphics & Animations</p>
                 </div>
               </div>
-            </div>
 
-            {/* Right Column - Tools */}
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white uppercase mb-6">Software & Tools</h2>
-              <div className="space-y-12">
-                {/* Row 1: swift xcode firebase */}
-                <div className="flex gap-6 items-center">
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Swift.png" alt="Swift" width={64} height={64} className="object-contain" />
-                  </div>
-                  <Image src="/Xcode.png" alt="Xcode" width={80} height={80} className="object-contain hover:scale-110 transition-transform duration-200 cursor-pointer" />
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Firebase.png" alt="Firebase" width={64} height={64} className="object-contain" />
-                  </div>
-                </div>
-                
-                {/* Row 2: react tailwind html css */}
-                <div className="flex gap-6 items-center">
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/React.png" alt="React" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/TailwindCSS.png" alt="TailwindCSS" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/HTML5.png" alt="HTML5" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/CSS3.png" alt="CSS3" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/AWS Amplify.png" alt="AWS Amplify" width={64} height={64} className="object-contain" />
-                  </div>
-                </div>
-                
-                {/* Row 3: figma vscode aws amplify github */}
-                <div className="flex gap-6 items-center">
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Figma.png" alt="Figma" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Visual Studio Code.png" alt="VSCode" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/AWS.png" alt="AWS" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Github.png" alt="Github" width={64} height={64} className="object-contain" />
-                  </div>
-                </div>
-                
-                {/* Row 4: ps ai pr ae blender */}
-                <div className="flex gap-6 items-center">
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Adobe Photoshop.png" alt="Photoshop" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Adobe Illustrator.png" alt="Illustrator" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Adobe Premiere.png" alt="Premiere Pro" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Adobe After Effects.png" alt="After Effects" width={64} height={64} className="object-contain" />
-                  </div>
-                  <div className="p-2 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                    <Image src="/Blender.png" alt="Blender" width={64} height={64} className="object-contain" />
-                  </div>
-                </div>
-                
-                {/* Row 5: final cut logic */}
-                <div className="flex gap-6 items-center">
-                  <Image src="/Final Cut Pro.png" alt="Final Cut Pro" width={80} height={80} className="object-contain hover:scale-110 transition-transform duration-200 cursor-pointer" />
-                  <Image src="/Logic Pro.png" alt="Logic Pro" width={80} height={80} className="object-contain hover:scale-110 transition-transform duration-200 cursor-pointer" />
-                </div>
-              </div>
+              {/* Software & Tools section removed per request */}
             </div>
           </motion.section>
         </div>

@@ -219,10 +219,11 @@ export default function YouTubeChapterGenerator() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-24 text-center"
+            className="mt-24 px-6 md:px-12"
           >
-            <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
-            <div className="grid md:grid-cols-3 gap-12">
+            <div className="max-w-6xl mx-auto text-center">
+              <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
+              <div className="grid md:grid-cols-3 gap-12">
               <div>
                 <h4 className="text-2xl font-medium text-gray-300 mb-4">FRONTEND</h4>
                 <p className="text-gray-400 text-lg leading-relaxed">
@@ -241,6 +242,7 @@ export default function YouTubeChapterGenerator() {
                   Leverages AWS Transcribe for multi-language audio processing and Google&apos;s Gemini AI for advanced natural language understanding and chapter optimization.
                 </p>
               </div>
+              </div>
             </div>
           </motion.section>
           {/* Next Steps Section */}
@@ -248,11 +250,12 @@ export default function YouTubeChapterGenerator() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="py-16"
+            className="py-24 px-6 md:px-12"
           >
-            <h3 className="text-4xl font-semibold text-white text-center mb-8">NEXT STEPS</h3>
+            <div className="max-w-6xl mx-auto">
+              <h3 className="text-4xl font-semibold text-white text-center mb-8">NEXT STEPS</h3>
             
-            <div className="text-gray-400 text-lg leading-relaxed space-y-6">
+              <div className="text-gray-400 text-lg leading-relaxed space-y-6">
               <p>
                 Looking ahead, there are two promising directions for expanding the YouTube Chapter Generator:
               </p>
@@ -288,6 +291,7 @@ export default function YouTubeChapterGenerator() {
                 </svg>
                 View Source Code
               </a>
+              </div>
             </div>
           </motion.section>
         </div>
