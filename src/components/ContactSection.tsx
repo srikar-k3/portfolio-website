@@ -22,7 +22,8 @@ export default function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+    setSubmitStatus('idle');
+
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',

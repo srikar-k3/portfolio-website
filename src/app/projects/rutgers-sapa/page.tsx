@@ -338,11 +338,11 @@ export default function RutgersSAPA() {
             <div className="grid grid-cols-3 gap-2 aspect-square">
               {[
                 { src: "/sapaig9.png", alt: "SAPA Instagram Post 9" },
+                { src: "/sapaig10.jpg", alt: "SAPA Instagram Post 10" },
                 { src: "/sapaig8.png", alt: "SAPA Instagram Post 8" },
                 { src: "/sapaig7.jpg", alt: "SAPA Instagram Post 7" },
                 { src: "/sapaig6.png", alt: "SAPA Instagram Post 6" },
                 { src: "/sapaig5.png", alt: "SAPA Instagram Post 5" },
-                { src: "/sapaig4.jpg", alt: "SAPA Instagram Post 4" },
                 { src: "/sapaig3.jpg", alt: "SAPA Instagram Post 3" }, 
                 { src: "/sapaig2.jpg", alt: "SAPA Instagram Post 2" },
                 { src: "/sapaig1.png", alt: "SAPA Instagram Post 1" }
@@ -357,7 +357,11 @@ export default function RutgersSAPA() {
                     width={360}
                     height={480}
                     className={`w-full h-full object-cover aspect-[3/4] transition-all duration-500 group-hover:brightness-110 ${
-                      image.src === "/sapaig2.jpg" ? "object-center" : "object-top"
+                      image.src === "/sapaig10.jpg"
+                        ? "object-[50%_80%]"
+                        : image.src === "/sapaig2.jpg"
+                        ? "object-center"
+                        : "object-top"
                     }`}
                   />
                 </div>

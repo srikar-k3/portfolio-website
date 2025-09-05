@@ -5,6 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Srikar Portfolio",
   description: "Visual and product designer who builds what I design. From brand identities to Swift apps and React applications, I create end-to-end digital experiences.",
+  icons: {
+    icon: "/yt-pfp.png",
+    shortcut: "/yt-pfp.png",
+    apple: "/yt-pfp.png",
+  },
 };
 
 export default function RootLayout({
