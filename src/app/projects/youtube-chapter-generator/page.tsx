@@ -26,6 +26,21 @@ export default function YouTubeChapterGenerator() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
   
+  const handleArrowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const container = document.getElementById('ytcg-content');
+    if (!container) return;
+    const firstSection = container.querySelector('section');
+    const el = (firstSection as HTMLElement) || (container as HTMLElement);
+    const wrapperEl = document.querySelector('div.fixed.top-0');
+    const navbarHeight = wrapperEl
+      ? (wrapperEl as HTMLElement).getBoundingClientRect().height
+      : (document.querySelector('nav') as HTMLElement | null)?.getBoundingClientRect().height || 0;
+    const paddingTop = parseFloat(window.getComputedStyle(el).paddingTop || '0') || 0;
+    const y = el.getBoundingClientRect().top + window.scrollY + paddingTop - navbarHeight;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+  
   const features = [
     {
       title: "Multi-language Audio Input",
@@ -69,7 +84,7 @@ export default function YouTubeChapterGenerator() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
+        className="relative w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
       >
         <div 
           className="h-full"
@@ -84,102 +99,118 @@ export default function YouTubeChapterGenerator() {
             className="w-full h-full object-cover scale-110" style={{ objectPosition: '50% 20%' }}
           />
         </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-black/30 to-black/60" />
+        <a href="#ytcg-content" onClick={handleArrowClick} aria-label="Scroll to content" className="absolute left-1/2 -translate-x-1/2 bottom-6 text-white/80 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 animate-bounce">
+            <path d="M12 16.5a1 1 0 0 1-.7-.29l-6-6a1 1 0 1 1 1.4-1.42L12 14.09l5.3-5.3a1 1 0 0 1 1.4 1.42l-6 6a1 1 0 0 1-.7.29Z" />
+          </svg>
+        </a>
       </motion.section>
 
       <main className="px-6 md:px-12">
-        <div className="max-w-6xl mx-auto py-24">
-
-          {/* Alternating Content Sections */}
-          <div className="space-y-24">
-            {/* Row 1: App Overview */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-6xl mx-auto"
-            >
-              <h3 className="text-4xl font-semibold text-white mb-8 text-center">APP OVERVIEW</h3>
-              
-              <div className="mb-8">
-                <h4 className="text-2xl font-medium text-gray-300 mb-4">Problem</h4>
-                <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                  YouTube&apos;s automatic captioning and chapter tools suffer from poor accuracy and generate generic, unhelpful chapter titles that fail to capture the actual content flow. Creators have no control over the automated process, resulting in chapters that don&apos;t reflect their content strategy or audience needs.
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                  The workflow problem is compounded for multilingual creators: existing chapter generation tools only accept English input, while YouTube&apos;s auto-translation produces inaccurate results that hurt discoverability. This forces creators to choose between authentic content in their native language or optimized English metadata for broader reach.
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  Manual chapter creation remains time-intensive and impractical for regular content production, while fully automated solutions lack the nuance and accuracy that quality content demands. Creators need a solution that combines automation efficiency with human oversight and control.
-                </p>
+        <div className="max-w-[1300px] mx-auto" id="ytcg-content">
+          {/* Overview */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="grid md:grid-cols-12 gap-12 items-start pt-[144px] pb-[72px]"
+          >
+            <div className="md:col-span-8">
+              <h3 className="text-2xl font-semibold text-white mb-3 text-left">Overview</h3>
+              <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
+                A creator-first tool that turns raw speech into accurate, audience-friendly YouTube chapters — combining multi‑language transcription, AI analysis, and human-in-the-loop editing so structure matches intent.
+              </p>
+              <p className="text-gray-300 text-[20px] leading-relaxed">
+                Built to solve real workflow pain: control over titles and boundaries, reliable timestamps, and export-ready chapters that improve discoverability and retention.
+              </p>
+            </div>
+            <div className="md:col-span-4">
+              <div className="mb-7">
+                <p className="text-[20px] text-white/90">Client</p>
+                <p className="text-[20px] text-white/60 mt-1">Personal Project</p>
               </div>
-              
+              <div className="flex flex-wrap gap-x-3 gap-y-3">
+                {['Product Design','React','Express','AWS Transcribe','Gemini AI'].map((label) => (
+                  <span key={label} className="inline-flex items-center rounded-full border border-white/20 text-white/80 text-xs tracking-wide px-3 py-1">{label}</span>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+
+          {/* Key Features (combined like House Rules) */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="py-[72px]"
+          >
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              {/* Text column */}
               <div>
-                <h4 className="text-2xl font-medium text-gray-300 mb-4">Solution</h4>
-                <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                  YouTube Chapter Generator uses a unique two-step pipeline: ASR (Automatic Speech Recognition) followed by LLM (Large Language Model) analysis. AWS Transcribe handles multi-language audio transcription with high accuracy, then Gemini AI analyzes the content flow to generate contextually relevant English chapter titles with precise timestamps.
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  The human-in-the-loop design gives creators control over the final output: review and edit AI-generated transcripts, adjust chapter boundaries, and refine titles before export. This approach delivers the efficiency of automation while preserving creator agency and ensuring chapters align with content strategy and brand voice.
-                </p>
+                <h3 className="text-2xl font-semibold text-white mb-3">Key Features</h3>
+                <div className="space-y-4">
+                  {features.map((feature, index) => (
+                    <div
+                      key={index}
+                      onMouseEnter={() => setActiveFeatureIndex(index)}
+                      className="cursor-pointer transition-all duration-300 hover:bg-black/30 p-4 -m-4 rounded-xl"
+                    >
+                      <h4 className="text-xl font-medium text-gray-200 mb-1">{feature.title}</h4>
+                      <p className="text-gray-300 text-[18px] leading-relaxed">{feature.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </motion.div>
 
-            {/* Row 2: Carousel (Left) + Key Features (Right) */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid md:grid-cols-2 gap-16 items-center"
-            >
-              {/* Interactive Carousel */}
-              <div className="relative">
-                <div className="aspect-[4/3] rounded-lg overflow-hidden relative">
+              {/* Carousel column */}
+              <div>
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                   {/* yt-lang image */}
-                  <div 
+                  <div
                     className={`absolute inset-0 transition-opacity duration-300 ${
                       activeFeatureIndex === 0 ? 'opacity-100' : 'opacity-0'
                     }`}
                   >
-                    <Image 
-                      src="/yt-lang.png" 
-                      alt="Multi-language Audio Input Interface" 
-                      width={800} 
+                    <Image
+                      src="/yt-lang.png"
+                      alt="Multi-language Audio Input Interface"
+                      width={800}
                       height={600}
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  
+
                   {/* gemini logo */}
-                  <div 
+                  <div
                     className={`absolute inset-0 transition-opacity duration-300 ${
                       activeFeatureIndex === 1 ? 'opacity-100' : 'opacity-0'
                     }`}
                   >
-                    <Image 
-                      src="/gemini_logo.png" 
-                      alt="Gemini AI Chapter Generation" 
-                      width={800} 
+                    <Image
+                      src="/gemini_logo.png"
+                      alt="Gemini AI Chapter Generation"
+                      width={800}
                       height={600}
                       className="w-full h-full object-contain bg-white"
                     />
                   </div>
-                  
+
                   {/* yt-edit image */}
-                  <div 
+                  <div
                     className={`absolute inset-0 transition-opacity duration-300 ${
                       activeFeatureIndex === 2 ? 'opacity-100' : 'opacity-0'
                     }`}
                   >
-                    <Image 
-                      src="/yt-edit.png" 
-                      alt="Human-in-the-loop Transcript Editor" 
-                      width={800} 
+                    <Image
+                      src="/yt-edit.png"
+                      alt="Human-in-the-loop Transcript Editor"
+                      width={800}
                       height={600}
                       className="w-full h-full object-contain"
                     />
                   </div>
                 </div>
-                
                 {/* Dot Navigation */}
                 <div className="flex justify-center space-x-2 mt-4">
                   {[0, 1, 2].map((index) => (
@@ -193,67 +224,44 @@ export default function YouTubeChapterGenerator() {
                   ))}
                 </div>
               </div>
-
-              <div>
-                <h3 className="text-4xl font-semibold text-white mb-6">KEY FEATURES</h3>
-                <div className="space-y-4">
-                  {features.map((feature, index) => (
-                    <div 
-                      key={index}
-                      onMouseEnter={() => setActiveFeatureIndex(index)}
-                      className="cursor-pointer transition-all duration-300 hover:bg-white/5 p-4 -m-4 rounded-lg"
-                    >
-                      <h4 className="text-2xl font-medium text-gray-300 mb-2">{feature.title}</h4>
-                      <p className="text-gray-400 text-lg leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.section>
 
           {/* Technical Stack - Centered Three Columns */}
+          {/* Technical Stack */}
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-24 px-6 md:px-12"
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="py-[72px]"
           >
-            <div className="max-w-6xl mx-auto text-center">
-              <h3 className="text-4xl font-semibold text-white mb-8">TECHNICAL STACK</h3>
+            <div className="text-left">
+              <h3 className="text-2xl font-semibold text-white mb-6">Technical Stack</h3>
               <div className="grid md:grid-cols-3 gap-12">
-              <div>
-                <h4 className="text-2xl font-medium text-gray-300 mb-4">FRONTEND</h4>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  Built with React and modern JavaScript, featuring responsive design and intuitive user interface for seamless audio processing and chapter management workflows.
-                </p>
-              </div>
-              <div>
-                <h4 className="text-2xl font-medium text-gray-300 mb-4">BACKEND</h4>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  Express.js server with AWS Transcribe integration for accurate speech-to-text conversion and Gemini AI for intelligent content analysis and chapter generation.
-                </p>
-              </div>
-              <div>
-                <h4 className="text-2xl font-medium text-gray-300 mb-4">AI & CLOUD</h4>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  Leverages AWS Transcribe for multi-language audio processing and Google&apos;s Gemini AI for advanced natural language understanding and chapter optimization.
-                </p>
-              </div>
+                <div>
+                  <h4 className="text-lg font-medium text-gray-300 mb-2">Frontend</h4>
+                  <p className="text-gray-300 text-[18px] leading-relaxed">React + modern JS; responsive UI for clean workflows.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-medium text-gray-300 mb-2">Backend</h4>
+                  <p className="text-gray-300 text-[18px] leading-relaxed">Express with AWS Transcribe; reliable speech-to-text.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-medium text-gray-300 mb-2">AI & Cloud</h4>
+                  <p className="text-gray-300 text-[18px] leading-relaxed">Gemini AI for analysis; exportable chapter output.</p>
+                </div>
               </div>
             </div>
           </motion.section>
-          {/* Next Steps Section */}
+          {/* Next Steps */}
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="py-24 px-6 md:px-12"
+            transition={{ duration: 0.6, delay: 0.65 }}
+            className="py-[72px]"
           >
-            <div className="max-w-6xl mx-auto">
-              <h3 className="text-4xl font-semibold text-white text-center mb-8">NEXT STEPS</h3>
+            <div>
+              <h3 className="text-2xl font-semibold text-white text-left mb-6">Next Steps</h3>
             
               <div className="text-gray-400 text-lg leading-relaxed space-y-6">
               <p>
@@ -280,18 +288,26 @@ export default function YouTubeChapterGenerator() {
             </div>
             
             <div className="text-center mt-12">
-              <a 
-                href="https://github.com/srikar-k3/audio-to-youtube-chapters/tree/main" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-8 py-4 bg-white text-black rounded-lg hover:bg-gray-200 transition-all duration-200 text-lg font-medium group"
-              >
-                <svg className="mr-3 h-6 w-6 group-hover:scale-110 transition-transform duration-200" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                View Source Code
-              </a>
-              </div>
+  <a 
+    href="https://github.com/srikar-k3/audio-to-youtube-chapters/tree/main" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="group relative inline-flex items-center justify-center w-full md:w-auto px-8 py-4 border border-white/20 rounded-xl text-lg font-medium text-white/90 hover:text-white transition-colors overflow-hidden"
+  >
+    {/* Hover background sweep */}
+    <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+
+    <svg
+      className="mr-3 h-6 w-6 text-white/70 group-hover:text-white transition-colors duration-200"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    </svg>
+    
+    <span className="relative z-10">View Source Code</span>
+  </a>
+</div>
             </div>
           </motion.section>
         </div>

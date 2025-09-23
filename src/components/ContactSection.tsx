@@ -1,168 +1,222 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, useInView, type Variants } from 'framer-motion';
+import { useMemo, useRef, useState } from 'react';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: ''
+    purpose: '',
+    message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMsg, setSubmitMsg] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  // form root observed for entrance animation
+  const rootRef = useRef<HTMLFormElement | null>(null);
+  const inView = useInView(rootRef, { amount: 0.12, once: true });
+
+  // Framer Motion likes easing typed as a cubic-bezier tuple
+  const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+  // Parent variants (just orchestration)
+  const groupVariants = useMemo<Variants>(
+    () => ({
+      hidden: {},
+      show: {
+        transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+      },
+    }),
+    []
+  );
+
+  // Child item variants
+  const item: Variants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 18, scale: 0.985 },
+      show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.5, ease: EASE },
+      },
+    }),
+    []
+  );
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setSubmitMsg(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setSubmitMsg(null);
 
     try {
-      const response = await fetch('/api/contact', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        setSubmitStatus('success');
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        setSubmitStatus('error');
-      }
-    } catch {
-      setSubmitStatus('error');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Email failed');
+
+      setSubmitMsg('Message sent!');
+      setFormData({ name: '', email: '', purpose: '', message: '' });
+    } catch (err: any) {
+      setSubmitMsg(err?.message || 'Error — please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <motion.section
-      id="contact"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 1.4 }}
-      className="mb-20 py-20"
-    >
-      {/* Section Title */}
-      <div className="text-center mb-16 pt-16 sm:pt-20 md:pt-24 lg:pt-32 xl:pt-[20vh]">
-        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Contact</h2>
-      </div>
+    <section id="contact" className="py-[72px]">
+      {/* Title — exactly like other sections */}
+      <h2 className="text-2xl font-semibold text-white mb-6 text-left">Contact</h2>
 
-      {/* Contact Form */}
-      <div className="max-w-6xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Name and Email Fields - Same Line */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.6 }}
-            className="pb-4"
-          >
-            <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-              {/* Name Field */}
-              <div className="flex-1 border-b border-gray-200 pb-4">
-                <label htmlFor="name" className="block text-lg font-medium text-gray-700 mb-2 tracking-wide">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full text-xl md:text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400"
-                  placeholder="Your name"
-                />
-              </div>
-
-              {/* Email Field */}
-              <div className="flex-1 border-b border-gray-200 pb-4">
-                <label htmlFor="email" className="block text-lg font-medium text-gray-700 mb-2 tracking-wide">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full text-xl md:text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400"
-                  placeholder="your@email.com"
-                />
-              </div>
+      <motion.form
+        ref={rootRef}
+        variants={groupVariants}
+        initial="hidden"
+        animate={inView ? 'show' : 'hidden'}
+        onSubmit={handleSubmit}
+        className="space-y-10"
+      >
+        {/* Name + Email */}
+        <motion.div variants={item} className="pb-2">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+            <div className="flex-1 border-b border-white/15 pb-3">
+              <label
+                htmlFor="name"
+                className="block text-sm md:text-base font-medium text-white/70 mb-2 tracking-wide"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full text-gray-300 text-[20px] leading-relaxed font-light bg-transparent border-0 outline-none placeholder-white/40"
+                placeholder="Your name"
+                autoComplete="name"
+              />
             </div>
-          </motion.div>
 
-          {/* Message Field */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.7 }}
-            className="border-b border-gray-200 pb-4"
+            <div className="flex-1 border-b border-white/15 pb-3">
+              <label
+                htmlFor="email"
+                className="block text-sm md:text-base font-medium text-white/70 mb-2 tracking-wide"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full text-gray-300 text-[20px] leading-relaxed font-light bg-transparent border-0 outline-none placeholder-white/40"
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Purpose */}
+        <motion.div variants={item} className="border-b border-white/15 pb-3">
+          <label
+            htmlFor="purpose"
+            className="block text-sm md:text-base font-medium text-white/70 mb-2 tracking-wide"
           >
-            <label htmlFor="message" className="block text-lg font-medium text-gray-700 mb-2 tracking-wide">
-              Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
+            Purpose
+          </label>
+          <div className="relative">
+            <select
+              id="purpose"
+              name="purpose"
+              value={formData.purpose}
               onChange={handleChange}
               required
-              rows={4}
-              className="w-full text-2xl font-light text-white bg-transparent border-0 outline-none placeholder-gray-400 resize-none"
-              placeholder="Your message..."
-            />
-          </motion.div>
-
-          {/* Submit Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.8 }}
-            className="pt-8"
-          >
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="group flex items-center justify-between w-full py-6 border-b border-gray-200 hover:bg-white/5 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`appearance-none w-full text-gray-300 text-[20px] leading-relaxed font-light bg-transparent border-0 outline-none pr-10 ${
+                formData.purpose ? 'text-white' : 'text-white/40'
+              }`}
             >
-              {/* Left - Action */}
-              <h3 className="text-2xl md:text-4xl font-normal text-white group-hover:text-gray-300 transition-colors duration-200 flex-shrink-0 uppercase">
-                {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
-              </h3>
-              
-              {/* Center - Status */}
-              <div className="flex-1 mx-8">
-                {submitStatus === 'success' && (
-                  <h4 className="text-lg text-green-600 tracking-wide">Message sent!</h4>
-                )}
-                {submitStatus === 'error' && (
-                  <h4 className="text-lg text-red-600 tracking-wide">Error — please try again</h4>
-                )}
-              </div>
-              
-              {/* Right - Arrow */}
-              <div className="text-2xl font-light text-gray-400 flex-shrink-0">
-                →
-              </div>
-            </button>
-          </motion.div>
-        </form>
-      </div>
-    </motion.section>
+              <option value="" disabled className="text-black">
+                Select one…
+              </option>
+              <option value="Recruiter — hiring opportunity">Recruiter — hiring opportunity</option>
+              <option value="Client — project inquiry">Client — project inquiry</option>
+              <option value="Other — general inquiry">Other — general inquiry</option>
+            </select>
+            <svg
+              className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M7 10l5 5 5-5H7z" />
+            </svg>
+          </div>
+        </motion.div>
+
+        {/* Message */}
+        <motion.div variants={item} className="border-b border-white/15 pb-3">
+          <label
+            htmlFor="message"
+            className="block text-sm md:text-base font-medium text-white/70 mb-2 tracking-wide"
+          >
+            Message
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows={3}
+            value={formData.message}
+            onChange={handleChange}
+            required
+            className="w-full text-gray-300 text-[20px] leading-relaxed font-light bg-transparent border-0 outline-none placeholder-white/40 resize-none"
+            placeholder="Tell me a bit about your project…"
+          />
+        </motion.div>
+
+        {/* Submit */}
+        <motion.div variants={item} className="pt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="group flex items-center justify-between w-full py-6 border-b border-white/15 hover:bg-white/5 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <h3 className="text-xl md:text-3xl font-semibold text-white group-hover:text-white/90 transition-colors">
+              {isSubmitting ? 'Sending…' : 'Send Message'}
+            </h3>
+
+            <div
+              className="flex-1 mx-6 md:mx-10 min-h-[1.25rem] text-sm md:text-base"
+              aria-live="polite"
+            >
+              {submitMsg && (
+                <span className={/sent!/i.test(submitMsg) ? 'text-green-500' : 'text-red-500'}>
+                  {submitMsg}
+                </span>
+              )}
+            </div>
+
+            <div className="text-2xl font-light text-white/70 group-hover:text-white">→</div>
+          </button>
+        </motion.div>
+      </motion.form>
+    </section>
   );
 }

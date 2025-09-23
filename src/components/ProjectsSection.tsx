@@ -1,159 +1,163 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import type { Variants, Easing } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-interface ProjectCardProps {
+type Project = {
   title: string;
   subtitle: string;
-  delay: number;
-  slug?: string;
+  slug: string;
+  hero: string;
+};
+
+const projects: Project[] = [
+  { title: 'House Rules', subtitle: 'iOS Development', slug: 'house-rules', hero: '/house_rules_hero_section_V2.png' },
+  { title: 'YouTube Chapter Generator', subtitle: 'Web Development', slug: 'youtube-chapter-generator', hero: '/yt_hero.png' },
+  { title: 'U&I Studios', subtitle: 'Visual Identity & Video Production', slug: 'ui-studios', hero: '/thumbnail_V2.png' },
+  { title: 'Rutgers SAPA', subtitle: 'Graphic Design & Video Production', slug: 'rutgers-sapa', hero: '/sapaOverviewImage.png' },
+  { title: 'Lambda Tech Services', subtitle: 'Brand Identity & Web Design', slug: 'lambda-tech-services', hero: '/lambda_mockup_1.jpg' },
+];
+
+// ✅ Type-safe cubic-bezier for this Framer/Motion typings setup
+const EASE_OUT: Easing = [0.22, 1, 0.36, 1] as unknown as Easing;
+
+function ProjectCard({
+  p,
+  index,
+  startedAt,
+  demoDelay = 140,
+  demoHold = 1200,
+  totalCards,
+}: {
+  p: Project;
   index: number;
-}
+  startedAt: number | null;
+  demoDelay?: number;
+  demoHold?: number;
+  totalCards: number;
+}) {
+  const [demoOn, setDemoOn] = useState(false);
 
-function ProjectCard({ title, subtitle, delay, slug, index }: ProjectCardProps) {
-  const [mousePos, setMousePos] = useState({ x: -200, y: -200 }); // Start offscreen
-  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    if (!startedAt) return;
+    const startTime = startedAt + index * demoDelay;
+    const globalEnd = startedAt + (totalCards - 1) * demoDelay + demoHold;
 
-  const content = (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      className="group relative flex flex-col md:flex-row md:items-center md:justify-between py-6 border-b border-gray-700 cursor-pointer overflow-hidden"
-      data-project-item
-      style={{ transition: 'background 400ms ease-out' }}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setMousePos({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        });
-      }}
-      onMouseEnter={(e) => {
-        setIsHovered(true);
-        e.currentTarget.style.background = `linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.025) 50%, rgba(255, 255, 255, 0.02) 100%)`;
-      }}
-      onMouseLeave={(e) => {
-        setIsHovered(false);
-        e.currentTarget.style.background = 'transparent';
-      }}
-    >
-      {/* Mouse glow effect */}
-      <div 
-        className="absolute pointer-events-none"
-        style={{
-          left: mousePos.x - 75,
-          top: mousePos.y - 75,
-          width: 150,
-          height: 150,
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
-          borderRadius: '50%',
-          filter: 'blur(30px)',
-          opacity: isHovered ? 1 : 0,
-          zIndex: 1,
-          transition: 'opacity 300ms ease-out'
-        }}
-      />
-      
-      {/* Mobile Layout */}
-      <div className="flex items-center justify-between md:hidden mb-2">
-        <h3 className="text-2xl font-normal text-white transition-colors duration-200">
-          {title}
-        </h3>
-        <div className="text-xl font-light text-gray-400">
-          0{index + 1}
+    const startTimer = setTimeout(() => setDemoOn(true), Math.max(0, startTime - Date.now()));
+    const stopTimer  = setTimeout(() => setDemoOn(false), Math.max(0, globalEnd - Date.now()));
+
+    return () => { clearTimeout(startTimer); clearTimeout(stopTimer); };
+  }, [startedAt, index, demoDelay, demoHold, totalCards]);
+
+  const hovered = demoOn;
+
+  return (
+    <Link href={`/projects/${p.slug}`} className="group relative block rounded-xl overflow-hidden">
+      <div className="relative aspect-[4/3]">
+        <Image
+          src={p.hero}
+          alt={`${p.title} Preview`}
+          fill
+          sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+          className={`object-cover ${p.slug === 'rutgers-sapa' ? 'object-[50%_55%]' : ''} ${p.slug === 'youtube-chapter-generator' ? 'scale-120' : ''}`}
+        />
+
+        <div
+          className={[
+            'pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent transition-opacity duration-400',
+            hovered ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+          ].join(' ')}
+        />
+        <div
+          className={[
+            'absolute left-4 bottom-4 transition-all duration-400',
+            hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0',
+          ].join(' ')}
+        >
+          <p className="text-white text-lg font-medium">{p.title}</p>
+          <p className="text-white/85 text-sm">{p.subtitle}</p>
+        </div>
+        <div
+          className={[
+            'absolute bottom-4 right-4 transition-opacity duration-400',
+            hovered ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+          ].join(' ')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
         </div>
       </div>
-      <div className="md:hidden">
-        <h4 className="text-sm text-gray-400 uppercase tracking-wide">{subtitle}</h4>
-      </div>
-      
-      {/* Desktop Layout */}
-      <h3 className="hidden md:block text-4xl font-normal text-white transition-colors duration-200 flex-shrink-0">
-        {title}
-      </h3>
-      
-      <div className="hidden md:block flex-1 mx-8">
-        <h4 className="text-lg text-gray-400 uppercase tracking-wide">{subtitle}</h4>
-      </div>
-      
-      <div className="hidden md:block text-2xl font-light text-gray-500 flex-shrink-0">
-        0{index + 1}
-      </div>
-    </motion.div>
-  );
-
-  return slug ? (
-    <Link href={`/projects/${slug}`} className="block">
-      {content}
     </Link>
-  ) : (
-    content
   );
 }
 
 export default function ProjectsSection() {
-  const projects = [
-    {
-      title: "House Rules",
-      subtitle: "iOS Development",
-      description: "Swift and Firebase home management app featuring chore rotation algorithms, rule voting systems, and real-time activity tracking. Combines democratic governance with accountability tracking for shared living spaces through automated scheduling and transparent member oversight.",
-      slug: "house-rules",
-    },
-    {
-      title: "Youtube Chapter Generator",
-      subtitle: "Web Development",
-      description: "React and Express web app with AWS Transcribe and Gemini AI that converts audio files into timestamped YouTube chapters. Features multi-language audio input with English chapter output for improved SEO, human-in-the-loop transcript editing, and automated content flow analysis to generate properly formatted chapter markers.",
-      slug: "youtube-chapter-generator",
-    },
-    {
-      title: "U&I Studios",
-      subtitle: "Visual Identity & Video Production",
-      description: "Logo design, animation, and video editing project for U&I Studios immigration documentary series. Created complete visual identity including animated assets, thumbnail designs, and edited interview content for personal stories of people building new lives in America.",
-      slug: "ui-studios",
-    },
-    {
-      title: "Rutgers SAPA",
-      subtitle: "Graphic Design & Video Production",
-      description: "Web design, brand identity, and video production for nationally competing dance team. Created strategic Instagram branding with progressive reveal campaigns, designed merchandise collections, and directed cinematographic introduction videos using Premiere Pro and After Effects.",
-      slug: "rutgers-sapa",
-    },
-    {
-      title: "Lambda Tech Services",
-      subtitle: "Brand Identity & Web Design",
-      description: "Complete brand identity design and UI/UX work for a tech consultancy. Created wireframes and interactive prototypes, collaborated directly with clients, and contributed Flutter development across multiple applications in an Agile environment.",
-      slug: "lambda-tech-services",
-    },
-  ];
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const titleInView = useInView(titleRef, { amount: 0.1, once: true });
+
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  useEffect(() => {
+    if (titleInView && !startedAt) setStartedAt(Date.now());
+  }, [titleInView, startedAt]);
+
+  // ✅ Explicitly type as Variants; use typed EASE_OUT
+  const containerVariants: Variants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 20 },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          duration: 0.6,
+          ease: EASE_OUT,
+          when: 'beforeChildren',
+          staggerChildren: 0.06,
+        },
+      },
+    }),
+    []
+  );
+
+  const itemVariants: Variants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 16, scale: 0.985 },
+      show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.45, ease: EASE_OUT },
+      },
+    }),
+    []
+  );
 
   return (
-    <motion.section
-      id="projects"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.4 }}
-      className="min-h-screen flex flex-col py-20"
-    >
-      {/* Section Title */}
-      <div className="text-center mb-6 pt-16 sm:pt-20 md:pt-24 lg:pt-32 xl:pt-[20vh]">
-        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase">Projects</h2>
-      </div>
+    <section id="projects" className="scroll-mt-[120px] py-[72px]">
+      <h2 ref={titleRef} className="text-2xl font-semibold text-white mb-6 text-left">Projects</h2>
 
-      {/* Project List */}
-      <div className="w-full max-w-6xl mx-auto flex-1">
-        {projects.map((project, index) => (
-          <ProjectCard
-            key={index}
-            title={project.title}
-            subtitle={project.subtitle}
-            delay={0.6 + (index * 0.1)}
-            slug={project.slug}
-            index={index}
-          />
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate={startedAt ? 'show' : 'hidden'}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8"
+      >
+        {projects.map((p, idx) => (
+          <motion.div key={p.slug} variants={itemVariants}>
+            <ProjectCard
+              p={p}
+              index={idx}
+              startedAt={startedAt}
+              demoDelay={140}
+              demoHold={1200}
+              totalCards={projects.length}
+            />
+          </motion.div>
         ))}
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 }

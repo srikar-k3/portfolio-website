@@ -1,30 +1,104 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+
+const letters = "Motion".split("");
+
+// Reusable highlight sweep that plays once when in view
+function MotionHighlight({
+  children,
+  delay = 0,
+  heightClass = "h-[75%]",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  heightClass?: string;
+}) {
+  const prefersReduced = useReducedMotion();
+
+  return (
+    <span className="relative inline-block">
+      <span className="relative z-10">{children}</span>
+      <motion.span
+        aria-hidden
+        className={`absolute inset-x-0 bottom-[2px] ${heightClass} bg-indigo-400/30 rounded-sm z-0 origin-left`}
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: prefersReduced ? 1 : 1 }}
+        transition={{
+          duration: prefersReduced ? 0 : 1.6, // slower sweep
+          ease: [0.22, 1, 0.36, 1],
+          delay,
+        }}
+        viewport={{ once: true, amount: 0.6 }} // triggers when ~60% visible
+        style={{ transform: 'translateZ(0)' }}
+      />
+    </span>
+  );
+}
 
 export default function AboutSection() {
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="relative min-h-screen flex items-center py-20"
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className="pt-[144px] pb-[72px]"
     >
-      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-        {/* Left Side - Title */}
-        <div className="md:order-1">
-          <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight uppercase text-center md:text-left">
-            ABOUT ME AS A CREATOR
+      <div className="grid md:grid-cols-12">
+        <div className="md:col-span-12">
+          <h2 className="text-2xl font-semibold text-white mb-3 select-none">
+            Visions In{" "}
+            <span className="inline-block">
+              {letters.map((char, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block"
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{
+                    duration: 0.6,
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    delay: i * 0.12,
+                    repeatDelay: (letters.length - 1) * 0.12 + 0.2,
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </span>
           </h2>
-        </div>
 
-        {/* Right Side - Paragraph */}
-        <div className="md:order-2">
-          <p className="text-gray-400 text-lg leading-relaxed">
-          I design digital products and the systems that support them, and I have the technical skills to bring those ideas to life. My work has ranged from brand identities and design systems to developing Swift apps and React platforms, always with a focus on creating experiences that are both useful and visually refined.
+          <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
+            My work brings together design and technology to create digital products
+            that are both{" "}
+            <MotionHighlight delay={0.3}>
+              functional and visually refined
+            </MotionHighlight>
+            . It spans from shaping brand identities and design systems to building
+            applications and platforms, always with a focus on clarity and usability.
           </p>
-          <p className="text-gray-400 text-lg leading-relaxed mt-6">
-          Alongside product design, I&#39;ve also worked in filmmaking and media, where I&#39;ve developed skills in visual storytelling, directing, and building complex motion and 3D environments. Those projects taught me how to shape a narrative, balance creative direction with technical execution, and craft visuals that carry the right mood and energy. Whether I&#39;m designing an app or producing media, my aim is the same: to merge design and technology in a way that feels thoughtful, engaging, and built with care.
+
+          <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
+            Alongside digital products, I have explored filmmaking and 3D media,
+            developing skills in{" "}
+            <MotionHighlight delay={0.6}>
+              storytelling, direction, and crafting environments
+            </MotionHighlight>{" "}
+            that carry the right mood and energy. These experiences continue to guide how
+            I <MotionHighlight delay={0.9}>balance creativity with technical execution</MotionHighlight>.
+          </p>
+
+          <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
+            <span className="bg-gradient-to-r from-indigo-300 to-indigo-400 bg-clip-text text-transparent font-semibold">
+              Summit Visions
+            </span>{" "}
+            was established as a dedicated space to expand this practice into client
+            collaborations. The agency builds on the same foundation:{" "}
+            <MotionHighlight delay={1.2}>
+              merging design, storytelling, and development
+            </MotionHighlight>{" "}
+            into experiences that feel intuitive and engaging.
           </p>
         </div>
       </div>
