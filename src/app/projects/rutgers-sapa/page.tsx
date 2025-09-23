@@ -111,7 +111,6 @@ function MerchScroller() {
 
 export default function RutgersSAPA() {
   const [scrollY, setScrollY] = useState(0);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const introVideoRef = useRef<HTMLVideoElement>(null);
   const introVideoSectionRef = useRef<HTMLDivElement>(null);
