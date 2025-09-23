@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface NavigationProps {
   className?: string;
@@ -15,12 +14,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isOverLightBackground, setIsOverLightBackground] = useState(false);
-  const router = useRouter();
 
-  // hold a short window to force nav visible during programmatic scrolls
+  // keep nav visible during programmatic scrolls
   const forceVisibleUntil = useRef<number>(0);
 
-  // ------- helpers -----------------------------------------------------------
+  // Scroll with padding compensation
   function scrollToSection(id: string) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -34,85 +32,89 @@ export default function Navigation({ className = '' }: NavigationProps) {
     const padTop = parseFloat(getComputedStyle(el).paddingTop || '0') || 0;
 
     // Baseline compensation
-    let PAD_FRACTION = 0.15;
-    let PAD_COMP = Math.min(48, padTop * PAD_FRACTION);
-    let NUDGE = -6; // slight lift so heading breathes under nav
+    const PAD_FRACTION = 0.15;
+    const PAD_COMP = Math.min(48, padTop * PAD_FRACTION);
 
-    // Fine-tune Contact a smidge lower (requested)
-    if (id === 'contact') {
-      // push down ~10px more vs others
-      NUDGE += 20;
-    }
+    // Give headings some air under the nav
+    let NUDGE = -6;
+
+    // Fine-tune contact lower by ~20px
+    if (id === 'contact') NUDGE += 20;
 
     const targetY = Math.max(0, pageY - navH - PAD_COMP + NUDGE);
 
-    // Mark programmatic scroll so the hide-on-scroll logic doesn't kick in
     sessionStorage.setItem('programmaticScrollActive', 'true');
-    forceVisibleUntil.current = Date.now() + 1200; // keep it visible ~1.2s
+    forceVisibleUntil.current = Date.now() + 1200;
 
     window.scrollTo({ top: targetY, behavior: 'smooth' });
 
-    // clear the flag shortly after
-    window.setTimeout(() => {
+    setTimeout(() => {
       sessionStorage.removeItem('programmaticScrollActive');
     }, 900);
   }
-  // ---------------------------------------------------------------------------
 
+  // Handle initial hash (reload or cross-page nav)
   useEffect(() => {
-    const controlNavbar = () => {
+    const hash = window.location.hash?.replace('#', '');
+    if (hash === 'projects' || hash === 'contact') {
+      requestAnimationFrame(() => {
+        forceVisibleUntil.current = Date.now() + 1500;
+        sessionStorage.setItem('programmaticScrollActive', 'true');
+        scrollToSection(hash);
+        setTimeout(() => {
+          sessionStorage.removeItem('navigatingToSection');
+          sessionStorage.removeItem('navHash');
+          sessionStorage.removeItem('programmaticScrollActive');
+        }, 1600);
+      });
+    }
+  }, []);
+
+  // Show/hide nav on manual scroll, but keep visible during programmatic jumps
+  useEffect(() => {
+    const onScroll = () => {
       const now = Date.now();
-      const currentScrollY = window.scrollY;
+      const y = window.scrollY;
 
-      // pages with a light hero (for tinting if you use it later)
+      // pages with a light hero for visual state (preps you to style on this)
       const path = window.location.pathname;
-      const isYouTubePage = path.includes('/youtube-chapter-generator');
-      const isSapaPage = path.includes('/rutgers-sapa');
-      const hasLightHero = isYouTubePage || isSapaPage;
-
+      const hasLightHero = path.includes('/youtube-chapter-generator') || path.includes('/rutgers-sapa');
       if (hasLightHero) {
         const heroH = window.innerHeight;
-        const isOverHero = currentScrollY < heroH - 100;
-        setIsOverLightBackground(isOverHero);
+        setIsOverLightBackground(y < heroH - 100);
       } else {
         setIsOverLightBackground(false);
       }
 
-      const isHashNavigating = sessionStorage.getItem('navigatingToSection') === 'true';
+      const hashNav = sessionStorage.getItem('navigatingToSection') === 'true';
       const programmatic = sessionStorage.getItem('programmaticScrollActive') === 'true';
 
-      // During programmatic/hash navigation or the force-visible window: keep shown
-      if (isNavigating || isHashNavigating || programmatic || now < forceVisibleUntil.current) {
+      if (isNavigating || hashNav || programmatic || now < forceVisibleUntil.current) {
         setIsVisible(true);
-        setLastScrollY(currentScrollY);
+        setLastScrollY(y);
         return;
       }
 
-      if (currentScrollY < 100) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY + 4) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY - 2) {
-        setIsVisible(true);
-      }
+      if (y < 100) setIsVisible(true);
+      else if (y > lastScrollY + 4) setIsVisible(false);
+      else if (y < lastScrollY - 2) setIsVisible(true);
 
-      setLastScrollY(currentScrollY);
+      setLastScrollY(y);
     };
 
-    window.addEventListener('scroll', controlNavbar, { passive: true });
-    controlNavbar();
-    return () => window.removeEventListener('scroll', controlNavbar);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, [lastScrollY, isNavigating]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
   const handleNavigation = () => {
     setIsNavigating(true);
     setIsVisible(true);
-    // keep nav forced-visible for navigation window
     forceVisibleUntil.current = Date.now() + 1500;
     setTimeout(() => setIsNavigating(false), 2000);
   };
@@ -129,6 +131,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
       }}
     >
       <nav
+        data-light={isOverLightBackground ? 'true' : 'false'}
         className="mx-auto max-w-max px-2 py-2 rounded-full relative overflow-visible transition-all duration-500 flex items-center gap-5"
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
@@ -188,14 +191,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
             onClick={(e) => {
               e.preventDefault();
               handleNavigation();
-
-              const onPage = !!document.getElementById('projects');
-              if (onPage) {
+              if (document.getElementById('projects')) {
                 scrollToSection('projects');
               } else {
                 sessionStorage.setItem('navigatingToSection', 'true');
                 sessionStorage.setItem('navHash', '#projects');
-                // mark programmatic before navigation
                 sessionStorage.setItem('programmaticScrollActive', 'true');
                 window.location.href = '/#projects';
               }
@@ -210,9 +210,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
             onClick={(e) => {
               e.preventDefault();
               handleNavigation();
-
-              const onPage = !!document.getElementById('contact');
-              if (onPage) {
+              if (document.getElementById('contact')) {
                 scrollToSection('contact');
               } else {
                 sessionStorage.setItem('navigatingToSection', 'true');

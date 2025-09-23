@@ -21,7 +21,7 @@ const projects: Project[] = [
   { title: 'Lambda Tech Services', subtitle: 'Brand Identity & Web Design', slug: 'lambda-tech-services', hero: '/lambda_mockup_1.jpg' },
 ];
 
-// ✅ Type-safe cubic-bezier for this Framer/Motion typings setup
+// Type-safe cubic-bezier that satisfies this Framer/Motion typings setup
 const EASE_OUT: Easing = [0.22, 1, 0.36, 1] as unknown as Easing;
 
 function ProjectCard({
@@ -96,15 +96,36 @@ function ProjectCard({
 }
 
 export default function ProjectsSection() {
+  // Trigger when either the SECTION or the TITLE appears (from top or bottom)
+  const sectionRef = useRef<HTMLElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
+
+  // Fires very early when any part of the section touches the viewport,
+  // with a slight negative bottom margin so it also triggers when scrolling UP.
+  const sectionInView = useInView(sectionRef, {
+    amount: 0.01,
+    margin: '0px 0px -25% 0px',
+    once: true,
+  });
   const titleInView = useInView(titleRef, { amount: 0.1, once: true });
 
   const [startedAt, setStartedAt] = useState<number | null>(null);
-  useEffect(() => {
-    if (titleInView && !startedAt) setStartedAt(Date.now());
-  }, [titleInView, startedAt]);
 
-  // ✅ Explicitly type as Variants; use typed EASE_OUT
+  // Start as soon as either sentinel hits
+  useEffect(() => {
+    if (!startedAt && (sectionInView || titleInView)) {
+      setStartedAt(Date.now());
+    }
+  }, [sectionInView, titleInView, startedAt]);
+
+  // Also kick if landing with #projects (direct link / cross-page)
+  useEffect(() => {
+    if (!startedAt && window.location.hash === '#projects') {
+      // wait one frame so layout is ready, then start
+      requestAnimationFrame(() => setStartedAt(Date.now()));
+    }
+  }, [startedAt]);
+
   const containerVariants: Variants = useMemo(
     () => ({
       hidden: { opacity: 0, y: 20 },
@@ -136,7 +157,7 @@ export default function ProjectsSection() {
   );
 
   return (
-    <section id="projects" className="scroll-mt-[120px] py-[72px]">
+    <section id="projects" ref={sectionRef} className="scroll-mt-[120px] py-[72px]">
       <h2 ref={titleRef} className="text-2xl font-semibold text-white mb-6 text-left">Projects</h2>
 
       <motion.div
