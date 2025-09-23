@@ -8,59 +8,18 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import { useEffect, useState } from 'react';
 
+type XY = { x: number; y: number };
+
 export default function Home() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isOverBusinessCard, setIsOverBusinessCard] = useState(false);
-  const [isOverProject, setIsOverProject] = useState(false);
+  const [mousePos, setMousePos] = useState<XY>({ x: 0, y: 0 });
+  const [isOverBusinessCard, setIsOverBusinessCard] = useState<boolean>(false);
+  const [isOverProject, setIsOverProject] = useState<boolean>(false);
 
   // ---- helpers --------------------------------------------------------------
-  function getNavHeight() {
+  const getNavHeight = (): number => {
     const navEl = document.querySelector('nav') as HTMLElement | null;
-    return navEl?.getBoundingClientRect().height || 80;
-  }
-
-  /**
-   * Scroll to a section id, compensating for:
-   * - fixed navbar height
-   * - section's own top padding (partial, to avoid overshoot)
-   * - per-section nudge (e.g., contact needs to sit a tad lower)
-   */
-  function scrollToSectionWithComp(id: string, behavior: ScrollBehavior = 'smooth') {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    const rect = el.getBoundingClientRect();
-    const pageY = rect.top + window.pageYOffset;
-
-    const navH = getNavHeight();
-    const padTop = parseFloat(getComputedStyle(el).paddingTop || '0') || 0;
-
-    // use a fraction of the padding so we don't overshoot when sections have big top padding
-    const PAD_FRACTION = 0.25;
-    const PAD_COMP = Math.min(56, padTop * PAD_FRACTION);
-
-    // baseline nudge
-    let NUDGE = 10;
-
-    // special-case nudges
-    if (id === 'projects') {
-      NUDGE += 0; // fine as-is
-    } else if (id === 'contact') {
-      // per your request, push contact slightly LOWER (further from nav)
-      NUDGE += 20;
-    }
-
-    const targetY = Math.max(0, pageY - navH - PAD_COMP + NUDGE);
-
-    // keep nav visible during programmatic jump
-    window.sessionStorage.setItem('navigatingToSection', 'true');
-    window.scrollTo({ top: targetY, behavior });
-
-    // clear after a short window so Navigation can resume normal hide/show
-    window.setTimeout(() => {
-      window.sessionStorage.removeItem('navigatingToSection');
-    }, 1200);
-  }
+    return navEl?.getBoundingClientRect().height ?? 80;
+  };
   // --------------------------------------------------------------------------
 
   useEffect(() => {
@@ -77,22 +36,20 @@ export default function Home() {
           e.clientY >= rect.top &&
           e.clientY <= rect.bottom;
         setIsOverBusinessCard(over);
+      } else {
+        setIsOverBusinessCard(false);
       }
 
       // suppress glow over any project tiles
-      const projectElements = document.querySelectorAll('[data-project-item]');
+      const projectElements: NodeListOf<Element> = document.querySelectorAll('[data-project-item]');
       let overProject = false;
-      projectElements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        if (
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
-        ) {
+      for (const element of projectElements) {
+        const r = element.getBoundingClientRect();
+        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
           overProject = true;
+          break;
         }
-      });
+      }
       setIsOverProject(overProject);
     };
 
@@ -101,17 +58,49 @@ export default function Home() {
   }, []);
 
   // Handle scrolling to #projects / #contact on initial load or when coming from another page
+  // Inlined logic to avoid react-hooks/exhaustive-deps warning.
   useEffect(() => {
-    const hash = window.location.hash; // e.g., "#projects" or "#contact"
+    const { hash } = window.location; // e.g., "#projects" or "#contact"
     if (!hash) return;
 
     // wait a tick to ensure layout is stable and nav has mounted
     requestAnimationFrame(() => {
       const id = hash.replace('#', '');
-      // use instant jump on load to avoid flash; nav stays visible via session flag
-      scrollToSectionWithComp(id, 'auto');
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const pageY = rect.top + window.pageYOffset;
+
+      const navH = getNavHeight();
+      const padTop = parseFloat(getComputedStyle(el).paddingTop || '0') || 0;
+
+      // use a fraction of the padding so we don't overshoot when sections have big top padding
+      const PAD_FRACTION = 0.25;
+      const PAD_COMP = Math.min(56, padTop * PAD_FRACTION);
+
+      // baseline nudge
+      let NUDGE = 10;
+
+      // special-case nudges
+      if (id === 'contact') {
+        // per your request, push contact slightly LOWER (further from nav)
+        NUDGE += 20;
+      }
+
+      const targetY = Math.max(0, pageY - navH - PAD_COMP + NUDGE);
+
+      // keep nav visible during programmatic jump
+      window.sessionStorage.setItem('navigatingToSection', 'true');
+      window.scrollTo({ top: targetY, behavior: 'auto' });
+
+      // clear after a short window so Navigation can resume normal hide/show
+      window.setTimeout(() => {
+        window.sessionStorage.removeItem('navigatingToSection');
+      }, 1200);
     });
   }, []);
+  // --------------------------------------------------------------------------
 
   return (
     <div
