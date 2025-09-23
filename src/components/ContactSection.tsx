@@ -3,8 +3,21 @@
 import { motion, useInView, type Variants } from 'framer-motion';
 import { useMemo, useRef, useState } from 'react';
 
+type FormData = {
+  name: string;
+  email: string;
+  purpose: string;
+  message: string;
+};
+
+type ContactApiResponse = {
+  error?: string;
+};
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]; // moved outside to avoid deps warning
+
 export default function ContactSection() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     purpose: '',
@@ -16,9 +29,6 @@ export default function ContactSection() {
   // form root observed for entrance animation
   const rootRef = useRef<HTMLFormElement | null>(null);
   const inView = useInView(rootRef, { amount: 0.12, once: true });
-
-  // Framer Motion likes easing typed as a cubic-bezier tuple
-  const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
   // Parent variants (just orchestration)
   const groupVariants = useMemo<Variants>(
@@ -52,7 +62,7 @@ export default function ContactSection() {
     setSubmitMsg(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -62,16 +72,25 @@ export default function ContactSection() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData satisfies FormData),
       });
 
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || 'Email failed');
+      // Best-effort parse; if JSON fails, treat as null
+      const data = (await res
+        .json()
+        .catch(() => null)) as ContactApiResponse | null;
+
+      if (!res.ok) {
+        const msg = (data && data.error) || 'Email failed';
+        throw new Error(msg);
+      }
 
       setSubmitMsg('Message sent!');
       setFormData({ name: '', email: '', purpose: '', message: '' });
-    } catch (err: any) {
-      setSubmitMsg(err?.message || 'Error — please try again.');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'Error — please try again.';
+      setSubmitMsg(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -89,6 +108,7 @@ export default function ContactSection() {
         animate={inView ? 'show' : 'hidden'}
         onSubmit={handleSubmit}
         className="space-y-10"
+        noValidate
       >
         {/* Name + Email */}
         <motion.div variants={item} className="pb-2">
@@ -129,6 +149,7 @@ export default function ContactSection() {
                 className="w-full text-gray-300 text-[20px] leading-relaxed font-light bg-transparent border-0 outline-none placeholder-white/40"
                 placeholder="you@example.com"
                 autoComplete="email"
+                inputMode="email"
               />
             </div>
           </div>
@@ -164,6 +185,8 @@ export default function ContactSection() {
               className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
               fill="currentColor"
             >
               <path d="M7 10l5 5 5-5H7z" />
@@ -213,7 +236,9 @@ export default function ContactSection() {
               )}
             </div>
 
-            <div className="text-2xl font-light text-white/70 group-hover:text-white">→</div>
+            <div className="text-2xl font-light text-white/70 group-hover:text-white" aria-hidden="true">
+              →
+            </div>
           </button>
         </motion.div>
       </motion.form>

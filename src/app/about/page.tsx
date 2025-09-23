@@ -4,20 +4,23 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AboutSection from '@/components/AboutSection';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
+type XY = { x: number; y: number };
 
 const mountFade = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.8, delay: 0.2 },
-};
+} as const;
 
 export default function AboutPage() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState<XY>({ x: 0, y: 0 });
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
-    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mousemove', onMove, { passive: true });
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
@@ -46,6 +49,7 @@ export default function AboutPage() {
           borderRadius: '50%',
           filter: 'blur(30px)',
         }}
+        aria-hidden="true"
       />
 
       <Navigation />
@@ -53,10 +57,7 @@ export default function AboutPage() {
       <main className="px-6 md:px-12">
         <div className="max-w-[1300px] mx-auto">
           {/* Section 1 — About Me */}
-          <motion.section
-            {...mountFade}
-            className="pt-[144px] pb-[72px]"
-          >
+          <motion.section {...mountFade} className="pt-[144px] pb-[72px]">
             <h2 className="text-2xl font-semibold text-white mb-3">About Me</h2>
             <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
               I studied Computer Science at Rutgers with minors in Business Administration, Cognitive Science, and Philosophy.
@@ -70,7 +71,7 @@ export default function AboutPage() {
             </p>
           </motion.section>
 
-          {/* Section 2 — Summit Visions (match padding to Section 1 & AboutSection) */}
+          {/* Section 2 — Summit Visions */}
           <motion.section
             {...mountFade}
             transition={{ duration: 0.8, delay: 0.35 }}
@@ -85,7 +86,7 @@ export default function AboutPage() {
             </p>
           </motion.section>
 
-          {/* Section 3 — Visions In Motion (already has pt-[144px] pb-[72px] internally) */}
+          {/* Section 3 — Visions In Motion */}
           <AboutSection />
 
           {/* CTA — smaller top space but keep bottom rhythm */}
@@ -94,12 +95,12 @@ export default function AboutPage() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="pt-[72px] pb-[96px]"
           >
-            <a
+            <Link
               href="/#contact"
               className="inline-flex items-center gap-2 text-lg md:text-xl font-semibold text-white/90 hover:text-white transition-colors"
             >
-              Let’s work together <span className="text-white/70">→</span>
-            </a>
+              Let’s work together <span className="text-white/70" aria-hidden="true">→</span>
+            </Link>
           </motion.section>
         </div>
       </main>

@@ -2,10 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-// ---- type-only imports to satisfy TS without bloating the bundle ----
+// ---- type-only imports kept only for what we actually use ----
 import type {
-  Box3,
-  CanvasTexture,
   Color,
   DirectionalLight,
   Euler,
@@ -16,13 +14,10 @@ import type {
   MeshPhysicalMaterial,
   Object3D,
   PerspectiveCamera,
-  PlaneGeometry,
   PMREMGenerator,
   Quaternion,
   Scene,
   Sphere,
-  Texture,
-  Vector3,
   WebGLRenderer,
 } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -65,14 +60,14 @@ export default function HourglassHero() {
       const FONT_SCALE = 0.08;
 
       const GLASS_SURFACE_COLOR = 0xa5b4fc;
-      const GLASS_ATTEN_COLOR   = 0xaec2ff;
-      const GLASS_THICKNESS     = 0.9;
-      const GLASS_ATTEN_DIST    = 1.6;
+      const GLASS_ATTEN_COLOR = 0xaec2ff;
+      const GLASS_THICKNESS = 0.9;
+      const GLASS_ATTEN_DIST = 1.6;
       const GLASS_ENV_INTENSITY = 1.0;
-      const GLASS_ROUGHNESS     = 0.08;
+      const GLASS_ROUGHNESS = 0.08;
 
-      const CAVITY_ATTEN_COLOR  = 0xeef3ff;
-      const CAVITY_ATTEN_DIST   = 5.0;
+      const CAVITY_ATTEN_COLOR = 0xeef3ff;
+      const CAVITY_ATTEN_DIST = 5.0;
 
       // -------------------- Renderer --------------------
       const renderer: WebGLRenderer = new THREE.WebGLRenderer({
@@ -277,10 +272,7 @@ export default function HourglassHero() {
           occMat.stencilZFail = THREE.KeepStencilOp;
           occMat.stencilFail = THREE.KeepStencilOp;
 
-          const occ = new THREE.Mesh(
-            new THREE.PlaneGeometry(PLANE_W, PLANE_H),
-            occMat
-          ) as Mesh;
+          const occ = new THREE.Mesh(new THREE.PlaneGeometry(PLANE_W, PLANE_H), occMat) as Mesh;
           occ.renderOrder = 2;
           occ.frustumCulled = false;
           scene.add(occ);
@@ -298,7 +290,7 @@ export default function HourglassHero() {
             ctx.textBaseline = 'middle';
             const size = Math.floor(sumCanvas.width * FONT_SCALE);
             ctx.font = `900 ${size}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
-            ctx.fillText('SUMMIT',  sumCanvas.width / 2, sumCanvas.height * 0.41);
+            ctx.fillText('SUMMIT', sumCanvas.width / 2, sumCanvas.height * 0.41);
             ctx.fillText('VISIONS', sumCanvas.width / 2, sumCanvas.height * 0.56);
           }
 
@@ -317,10 +309,7 @@ export default function HourglassHero() {
           sumMat.stencilZFail = THREE.KeepStencilOp;
           sumMat.stencilFail = THREE.KeepStencilOp;
 
-          const textPlane = new THREE.Mesh(
-            new THREE.PlaneGeometry(PLANE_W, PLANE_H),
-            sumMat
-          ) as Mesh;
+          const textPlane = new THREE.Mesh(new THREE.PlaneGeometry(PLANE_W, PLANE_H), sumMat) as Mesh;
           textPlane.renderOrder = 3;
           textPlane.frustumCulled = false;
           scene.add(textPlane);
@@ -395,7 +384,9 @@ export default function HourglassHero() {
     }
 
     init();
-    return () => { if (cleanup) cleanup(); };
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, []);
 
   return (
@@ -415,10 +406,6 @@ export default function HourglassHero() {
 
       {/* Canvas host */}
       <div ref={containerRef} className="relative w-full h-[75vh] md:h-[85vh] lg:h-[92vh] max-w-none" />
-
-      <div className="absolute left-4 bottom-4 text-xs text-black/60">
-        use mouse to move the hourglass
-      </div>
     </section>
   );
 }
