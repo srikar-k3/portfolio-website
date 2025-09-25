@@ -71,7 +71,6 @@ export default function HourglassHero(
 
       const PLANE_W = 3.6;
       const PLANE_H = 1.6;
-      const FONT_SCALE = 0.08;
 
       const GLASS_SURFACE_COLOR = 0xa5b4fc;
       const GLASS_ATTEN_COLOR = 0xaec2ff;
@@ -211,9 +210,8 @@ export default function HourglassHero(
         const vFOV = (camera.fov * Math.PI) / 180;
         const worldH = 2 * d * Math.tan(vFOV / 2) * (srkrH / viewH);
         const worldW = worldH * PLANE_ASPECT;
-        // Resize planes
-        const geoParams = (occPlane.geometry as any)?.parameters || { width: 1, height: 1 };
-        occPlane.scale.set(worldW / geoParams.width, worldH / geoParams.height, 1);
+        // Resize planes relative to their base geometry size
+        occPlane.scale.set(worldW / PLANE_W, worldH / PLANE_H, 1);
         maskedText.scale.copy(occPlane.scale);
 
         // Regenerate canvas at DPR to match pixel height
@@ -260,7 +258,7 @@ export default function HourglassHero(
       let firstPaintedWithModel = false; // set after we render at least one frame including the model
 
       function startFallbackProgress() {
-        if (!onProgress) return;
+        if (!onProgressRef.current) return;
         usingFallback = true;
         const start = fallbackStart;
         const duration = 2500; // ms to reach ~85%
@@ -271,7 +269,7 @@ export default function HourglassHero(
           const pct = Math.min(85, Math.max(1, Math.round(eased * 85)));
           if (pct !== lastFallbackPct) {
             lastFallbackPct = pct;
-            try { onProgress(pct); } catch {}
+            const cb = onProgressRef.current; if (cb) { try { cb(pct); } catch {} }
           }
           if (t < 1 && usingFallback) fallbackRaf = requestAnimationFrame(tick);
         };
