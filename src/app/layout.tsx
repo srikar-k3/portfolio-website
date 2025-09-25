@@ -21,6 +21,21 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* Preload key fonts to avoid FOUT and ensure SRKR/wordmark render immediately */}
+        <link
+          rel="preload"
+          as="font"
+          href="/fonts/figtree/Figtree-Black.ttf"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="font"
+          href="/fonts/nunito-sans/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
         {/* Google Analytics via next/script */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-FEBY07XY8L" strategy="afterInteractive" />
         <Script id="ga-setup" strategy="afterInteractive">

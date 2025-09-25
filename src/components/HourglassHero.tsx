@@ -42,12 +42,22 @@ export default function HourglassHero(
   const containerRef = useRef<HTMLDivElement | null>(null);
   // Make the canvas host invisible until we confirm a frame with the model
   const hostRef = useRef<HTMLDivElement | null>(null);
+  // Stable callback refs so we can keep effect deps []
+  const onLoadedRef = useRef(onLoaded);
+  const onProgressRef = useRef(onProgress);
+  onLoadedRef.current = onLoaded;
+  onProgressRef.current = onProgress;
+  // One-time init guard
+  const didInitRef = useRef(false);
 
   useEffect(() => {
+
     let cleanup: (() => void) | null = null;
     let rafId: number | null = null;
 
     async function init() {
+      if (didInitRef.current) return; // guard against accidental re-entry
+      didInitRef.current = true;
       const THREE = await import('three');
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
       const { RoomEnvironment } = await import('three/examples/jsm/environments/RoomEnvironment.js');
@@ -83,6 +93,16 @@ export default function HourglassHero(
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.0;
       containerEl.appendChild(renderer.domElement);
+      // Context loss/resume guards
+      let shuttingDown = false;
+      let contextLost = false;
+      const onContextLost = (e: Event) => {
+        e.preventDefault();
+        contextLost = true;
+      };
+      const onContextRestored = () => { contextLost = false; };
+      renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
+      renderer.domElement.addEventListener('webglcontextrestored', onContextRestored, false);
 
       // -------------------- Scene / Camera --------------------
       const scene: Scene = new THREE.Scene();
@@ -118,7 +138,11 @@ export default function HourglassHero(
         camera.lookAt(0, 0, 0);
       }
 
-      function resize() {
+      let resizeRaf: number | null = null;
+      let layoutRaf: number | null = null;
+      let ro: ResizeObserver | null = null;
+      let srkrRO: ResizeObserver | null = null;
+      const resize = () => {
         const el = containerRef.current;
         if (!el) return;
         const w = el.clientWidth || 1;
@@ -127,18 +151,24 @@ export default function HourglassHero(
         camera.aspect = Math.max(1e-6, w / Math.max(1, h));
         camera.updateProjectionMatrix();
         if (fitRadius) fitCameraForRadius(fitRadius);
-      }
-
-      resize();
-      const ro = new ResizeObserver(resize);
-      ro.observe(containerEl);
+        // Recompute HUD plane sizing vs SRKR height (only when HUD ready)
+        // Defer one extra frame to ensure SRKR's vw/vh-based size has settled
+        if (readyHUD) {
+          if (layoutRaf) cancelAnimationFrame(layoutRaf);
+          // Double-RAF to let CSS vw/vh and font metrics settle after a big->small change
+          layoutRaf = requestAnimationFrame(() => {
+            requestAnimationFrame(() => scheduleLayoutHUD());
+          });
+        }
+      };
 
       // -------------------- Controls --------------------
       const controls = new TrackballControls(camera, renderer.domElement);
       controls.noZoom = true;
       controls.noPan = true;
-      controls.rotateSpeed = 2.6;
-      controls.dynamicDampingFactor = 0.1;
+      // Tame drag responsiveness per feedback
+      controls.rotateSpeed = 1.4;
+      controls.dynamicDampingFactor = 0.12;
 
       // -------------------- Graph --------------------
       const hourglassGroup: Group = new THREE.Group();
@@ -153,6 +183,72 @@ export default function HourglassHero(
       // HUD planes (created later)
       let occPlane: Mesh | null = null;
       let maskedText: Mesh | null = null;
+      let sumTex: THREE.CanvasTexture | null = null;
+      let sumCanvas: HTMLCanvasElement | null = null;
+      let sumCtx: CanvasRenderingContext2D | null = null;
+      const PLANE_ASPECT = 3.6 / 1.6; // keep your design aspect
+      let readyHUD = false;
+
+      const scheduleLayoutHUD = () => {
+        // Only proceed when everything required exists
+        if (!readyHUD) return;
+        const host = containerRef.current;
+        if (!host || !occPlane || !maskedText) return;
+        // Defensive: ensure there are not multiple HUD meshes lingering
+        const toRemove: Object3D[] = [];
+        scene.traverse((obj: Object3D) => {
+          if ((obj as Mesh).isMesh && obj !== occPlane && obj !== maskedText && obj.userData?.hud) {
+            toRemove.push(obj);
+          }
+        });
+        for (const obj of toRemove) {
+          if (obj.parent) obj.parent.remove(obj);
+        }
+        const srkrEl = document.getElementById('srkrRef') as HTMLElement | null;
+        const srkrH = srkrEl?.getBoundingClientRect().height || host.clientHeight * 0.18;
+        const viewH = Math.max(1, host.clientHeight);
+        const d = HUD_DISTANCE;
+        const vFOV = (camera.fov * Math.PI) / 180;
+        const worldH = 2 * d * Math.tan(vFOV / 2) * (srkrH / viewH);
+        const worldW = worldH * PLANE_ASPECT;
+        // Resize planes
+        const geoParams = (occPlane.geometry as any)?.parameters || { width: 1, height: 1 };
+        occPlane.scale.set(worldW / geoParams.width, worldH / geoParams.height, 1);
+        maskedText.scale.copy(occPlane.scale);
+
+        // Regenerate canvas at DPR to match pixel height
+        const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+        const canvasH = Math.min(2048, Math.max(256, Math.round(srkrH * dpr)));
+        const canvasW = Math.min(4096, Math.max(512, Math.round(canvasH * PLANE_ASPECT)));
+        if (!sumCanvas) {
+          sumCanvas = document.createElement('canvas');
+          sumCtx = sumCanvas.getContext('2d');
+        }
+        if (!sumCanvas || !sumCtx) return;
+        sumCanvas.width = canvasW;
+        sumCanvas.height = canvasH;
+        sumCtx.clearRect(0, 0, canvasW, canvasH);
+        sumCtx.fillStyle = '#000000';
+        sumCtx.textAlign = 'center';
+        sumCtx.textBaseline = 'middle';
+        // Slightly smaller letterforms inside the fixed block height
+        const fontPx = Math.floor(canvasH * 0.28);
+        sumCtx.font = `900 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
+        // Increased separation + adjust for smaller glyphs: raise SUMMIT, lower VISIONS
+        sumCtx.fillText('SUMMIT', canvasW / 2, canvasH * 0.36);
+        sumCtx.fillText('VISIONS', canvasW / 2, canvasH * 0.62);
+        if (!sumTex) {
+          sumTex = new THREE.CanvasTexture(sumCanvas);
+          sumTex.colorSpace = THREE.SRGBColorSpace;
+        } else {
+          sumTex.needsUpdate = true;
+        }
+        const mat = maskedText.material as THREE.MeshBasicMaterial | null;
+        if (mat && sumTex) {
+          mat.map = sumTex;
+          mat.needsUpdate = true;
+        }
+      };
 
       // -------------------- Load GLTF --------------------
       const loader = new GLTFLoader();
@@ -310,24 +406,17 @@ export default function HourglassHero(
           occ.frustumCulled = false;
           scene.add(occ);
           occPlane = occ;
+          occPlane.name = 'HUD_OCC';
 
           // (3) Text plane
-          const sumCanvas = document.createElement('canvas');
-          sumCanvas.width = 2048;
-          sumCanvas.height = 1024;
-          const ctx = sumCanvas.getContext('2d');
-          if (ctx) {
-            ctx.clearRect(0, 0, sumCanvas.width, sumCanvas.height);
-            ctx.fillStyle = '#000000';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            const size = Math.floor(sumCanvas.width * FONT_SCALE);
-            ctx.font = `900 ${size}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
-            ctx.fillText('SUMMIT', sumCanvas.width / 2, sumCanvas.height * 0.41);
-            ctx.fillText('VISIONS', sumCanvas.width / 2, sumCanvas.height * 0.56);
+          // Create initial texture; actual sizing happens in scheduleLayoutHUD()
+          sumCanvas = document.createElement('canvas');
+          sumCanvas.width = 1024; sumCanvas.height = 512;
+          sumCtx = sumCanvas.getContext('2d');
+          if (sumCtx) {
+            sumCtx.clearRect(0,0,1024,512);
           }
-
-          const sumTex = new THREE.CanvasTexture(sumCanvas);
+          sumTex = new THREE.CanvasTexture(sumCanvas);
           sumTex.colorSpace = THREE.SRGBColorSpace;
 
           const sumMat = new THREE.MeshBasicMaterial({
@@ -347,6 +436,29 @@ export default function HourglassHero(
           textPlane.frustumCulled = false;
           scene.add(textPlane);
           maskedText = textPlane;
+          maskedText.name = 'HUD_TEXT';
+
+          // Observe SRKR element size so HUD updates when its vw-based font changes
+          const srkrEl = document.getElementById('srkrRef');
+          if (srkrEl) {
+            srkrRO = new ResizeObserver(() => {
+              // run on next frame to batch changes
+              requestAnimationFrame(() => scheduleLayoutHUD());
+            });
+            srkrRO.observe(srkrEl);
+          }
+
+          // Mark HUD ready and do initial layout now that planes and material exist
+          readyHUD = true;
+          scheduleLayoutHUD();
+
+          // Now that HUD is ready, attach ResizeObserver
+          resize();
+          ro = new ResizeObserver(() => {
+            if (resizeRaf) cancelAnimationFrame(resizeRaf);
+            resizeRaf = requestAnimationFrame(resize);
+          });
+          ro.observe(containerEl);
 
           // Mark HUD planes & helpers
           const hudPlanes = [occPlane, maskedText].filter(Boolean) as Mesh[];
@@ -365,6 +477,9 @@ export default function HourglassHero(
                 .add(new THREE.Vector3(0, 0, -HUD_DISTANCE).applyQuaternion(camera.quaternion));
             }
           };
+
+          // After planes exist, compute their size to match SRKR height
+          scheduleLayoutHUD();
         }
 
         // Fit camera to model
@@ -376,17 +491,19 @@ export default function HourglassHero(
         // -------------------- On-load pose --------------------
         const smoother = (u: number) => u * u * u * (u * (6 * u - 15) + 10);
         const startQ: Quaternion = axisNode.quaternion.clone();
+        // Opposite adjustment: a hair more X pitch, a hair less roll
         const targetEuler: Euler = new THREE.Euler(
-          THREE.MathUtils.degToRad(-20),
+          THREE.MathUtils.degToRad(-22),
           0,
-          THREE.MathUtils.degToRad(15),
+          THREE.MathUtils.degToRad(12),
           'YXZ'
         );
         const targetQ: Quaternion = new THREE.Quaternion().setFromEuler(targetEuler);
 
         let startMs = 0;
         function animatePose(now: number) {
-          if (startMs === 0) startMs = now + 150;
+          // Intentionally delay pose animation start by ~2s after model load
+          if (startMs === 0) startMs = now + 2000;
           const t = Math.max(0, Math.min(1, (now - startMs) / 1200));
           const u = smoother(t);
           const q = startQ.clone().slerp(targetQ, u);
@@ -397,19 +514,19 @@ export default function HourglassHero(
         // Stop fallback progression and jump to 100
         usingFallback = false;
         if (fallbackRaf) cancelAnimationFrame(fallbackRaf);
-        if (onProgress) { try { onProgress(100); } catch { /* noop */ } }
+        const cbP = onProgressRef.current; if (cbP) { try { cbP(100); } catch { /* noop */ } }
         // Notify parent that the hourglass finished initial load
-        try { onLoaded && onLoaded(); } catch {}
+        const cbL = onLoadedRef.current; if (cbL) { try { cbL(); } catch { /* noop */ } }
       },
       (evt) => {
-        if (!onProgress) return;
+        if (!onProgressRef.current) return;
         const total = evt.total || 0;
         const loaded = evt.loaded || 0;
         if (total > 0) {
           // Real network progress
           const pct = Math.min(100, Math.max(1, Math.round((loaded / total) * 100)));
           usingFallback = false;
-          try { onProgress(pct); } catch { /* noop */ }
+          const cbP = onProgressRef.current; if (cbP) { try { cbP(pct); } catch { /* noop */ } }
         } else {
           // Some servers don't send total; use a smooth fallback
           if (!usingFallback) startFallbackProgress();
@@ -418,10 +535,11 @@ export default function HourglassHero(
 
       // -------------------- Loop --------------------
       function tick() {
+        if (shuttingDown || contextLost) { rafId = requestAnimationFrame(tick); return; }
         controls.update();
         const placeHUD = (scene.userData as HUDUserData)._placeHUD;
         if (placeHUD) placeHUD();
-        renderer.render(scene, camera);
+        try { renderer.render(scene, camera); } catch {}
 
         // After we have the model in scene and we painted at least one frame,
         // reveal the host and fire onLoaded exactly once.
@@ -429,16 +547,20 @@ export default function HourglassHero(
           firstPaintedWithModel = true;
           const host = hostRef.current;
           if (host) host.style.opacity = '1';
-          if (onProgress) { try { onProgress(100); } catch { /* noop */ } }
-          if (onLoaded) { try { onLoaded(); } catch { /* noop */ } }
+          const cbP = onProgressRef.current; if (cbP) { try { cbP(100); } catch { /* noop */ } }
+          const cbL = onLoadedRef.current; if (cbL) { try { cbL(); } catch { /* noop */ } }
         }
         rafId = requestAnimationFrame(tick);
       }
       tick();
 
       cleanup = () => {
+        shuttingDown = true;
         if (rafId) cancelAnimationFrame(rafId);
-        ro.disconnect();
+        if (ro) ro.disconnect();
+        if (srkrRO) srkrRO.disconnect();
+        renderer.domElement.removeEventListener('webglcontextlost', onContextLost, false);
+        renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored, false);
         renderer.dispose();
         if (renderer.domElement?.parentElement) {
           renderer.domElement.parentElement.removeChild(renderer.domElement);
@@ -450,7 +572,7 @@ export default function HourglassHero(
     return () => {
       if (cleanup) cleanup();
     };
-  }, [onLoaded, onProgress]);
+  }, []);
 
   return (
     <section
@@ -460,8 +582,14 @@ export default function HourglassHero(
       {/* BIG SRKR. base layer */}
       <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
         <span
-          className="text-[18vw] md:text-[14vw] font-extrabold tracking-tight text-black"
-          style={{ letterSpacing: '0.25em', textTransform: 'uppercase' }}
+          id="srkrRef"
+          className="text-[20vw] md:text-[16vw] font-extrabold tracking-tight text-black"
+          style={{
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            fontFamily: 'Figtree, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+            fontWeight: 900,
+          }}
         >
           SRKR
         </span>
