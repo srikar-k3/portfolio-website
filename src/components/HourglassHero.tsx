@@ -40,6 +40,8 @@ export default function HourglassHero(
   { onLoaded, onProgress }: { onLoaded?: () => void; onProgress?: (pct: number) => void } = {}
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // Make the canvas host invisible until we confirm a frame with the model
+  const hostRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cleanup: (() => void) | null = null;
@@ -158,6 +160,8 @@ export default function HourglassHero(
       let lastFallbackPct = 0;
       let usingFallback = false;
       let fallbackRaf: number | null = null;
+      let modelAdded = false; // becomes true once GLTF root added to scene
+      let firstPaintedWithModel = false; // set after we render at least one frame including the model
 
       function startFallbackProgress() {
         if (!onProgress) return;
@@ -258,6 +262,7 @@ export default function HourglassHero(
         }
 
         tiltNode.add(root);
+        modelAdded = true;
 
         // --------- Stencil mask & HUD planes ----------
         let maskGeo: Mesh['geometry'] | null = null;
@@ -417,6 +422,16 @@ export default function HourglassHero(
         const placeHUD = (scene.userData as HUDUserData)._placeHUD;
         if (placeHUD) placeHUD();
         renderer.render(scene, camera);
+
+        // After we have the model in scene and we painted at least one frame,
+        // reveal the host and fire onLoaded exactly once.
+        if (modelAdded && !firstPaintedWithModel) {
+          firstPaintedWithModel = true;
+          const host = hostRef.current;
+          if (host) host.style.opacity = '1';
+          if (onProgress) { try { onProgress(100); } catch { /* noop */ } }
+          if (onLoaded) { try { onLoaded(); } catch { /* noop */ } }
+        }
         rafId = requestAnimationFrame(tick);
       }
       tick();
@@ -452,8 +467,12 @@ export default function HourglassHero(
         </span>
       </div>
 
-      {/* Canvas host */}
-      <div ref={containerRef} className="relative w-full h-[75vh] md:h-[85vh] lg:h-[92vh] max-w-none" />
+      {/* Canvas host (hidden until first painted frame with model) */}
+      <div
+        ref={(el) => { containerRef.current = el; hostRef.current = el; }}
+        className="relative w-full h-[75vh] md:h-[85vh] lg:h-[92vh] max-w-none transition-opacity duration-200"
+        style={{ opacity: 0 }}
+      />
 
       {/* Bouncing arrow to next section (Projects) */}
       <a
