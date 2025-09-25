@@ -17,6 +17,27 @@ export default function Home() {
   const [isLoadingHero, setIsLoadingHero] = useState<boolean>(true);
   const [loadPct, setLoadPct] = useState<number>(1);
   const [hideOverlay, setHideOverlay] = useState<boolean>(false);
+  const [rampActive, setRampActive] = useState<boolean>(true);
+
+  // Time-based ramp to ensure visible progression even without total bytes
+  useEffect(() => {
+    if (!isLoadingHero || !rampActive) return;
+    let raf: number | null = null;
+    const start = performance.now();
+    const duration = 2800; // slower: ms to reach ~95%
+    const tick = () => {
+      const t = Math.min(1, (performance.now() - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      // Chunky/blocky steps: snap to 4% increments
+      const raw = 1 + eased * 94; // 1..95
+      const step = 4; // percent per block
+      const target = Math.min(95, Math.max(1, Math.round(raw / step) * step));
+      setLoadPct((prev) => (prev < target ? target : prev));
+      if (t < 1 && isLoadingHero && rampActive) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { if (raf) cancelAnimationFrame(raf); };
+  }, [isLoadingHero, rampActive]);
 
   // ---- helpers --------------------------------------------------------------
   const getNavHeight = (): number => {
@@ -151,7 +172,11 @@ export default function Home() {
 
       {/* Full-bleed Home Header */}
       <HourglassHero
-        onProgress={(p) => setLoadPct(p)}
+        onProgress={(p) => {
+          // If real progress arrives, prefer it and pause the ramp from pulling backwards
+          setRampActive(false);
+          setLoadPct((prev) => (p > prev ? p : prev));
+        }}
         onLoaded={() => {
           setLoadPct(100);
           setIsLoadingHero(false);

@@ -154,7 +154,7 @@ export default function HourglassHero(
 
       // -------------------- Load GLTF --------------------
       const loader = new GLTFLoader();
-      let fallbackStart = performance.now();
+      const fallbackStart = performance.now();
       let lastFallbackPct = 0;
       let usingFallback = false;
       let fallbackRaf: number | null = null;
@@ -392,7 +392,7 @@ export default function HourglassHero(
         // Stop fallback progression and jump to 100
         usingFallback = false;
         if (fallbackRaf) cancelAnimationFrame(fallbackRaf);
-        try { onProgress && onProgress(100); } catch {}
+        if (onProgress) { try { onProgress(100); } catch { /* noop */ } }
         // Notify parent that the hourglass finished initial load
         try { onLoaded && onLoaded(); } catch {}
       },
@@ -404,7 +404,7 @@ export default function HourglassHero(
           // Real network progress
           const pct = Math.min(100, Math.max(1, Math.round((loaded / total) * 100)));
           usingFallback = false;
-          try { onProgress(pct); } catch {}
+          try { onProgress(pct); } catch { /* noop */ }
         } else {
           // Some servers don't send total; use a smooth fallback
           if (!usingFallback) startFallbackProgress();
@@ -435,7 +435,7 @@ export default function HourglassHero(
     return () => {
       if (cleanup) cleanup();
     };
-  }, []);
+  }, [onLoaded, onProgress]);
 
   return (
     <section
