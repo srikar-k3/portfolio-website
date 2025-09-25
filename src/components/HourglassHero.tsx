@@ -12,6 +12,7 @@ import type {
   Mesh,
   MeshBasicMaterial,
   MeshPhysicalMaterial,
+  CanvasTexture,
   Object3D,
   PerspectiveCamera,
   PMREMGenerator,
@@ -182,7 +183,7 @@ export default function HourglassHero(
       // HUD planes (created later)
       let occPlane: Mesh | null = null;
       let maskedText: Mesh | null = null;
-      let sumTex: THREE.CanvasTexture | null = null;
+      let sumTex: CanvasTexture | null = null;
       let sumCanvas: HTMLCanvasElement | null = null;
       let sumCtx: CanvasRenderingContext2D | null = null;
       const PLANE_ASPECT = 3.6 / 1.6; // keep your design aspect
