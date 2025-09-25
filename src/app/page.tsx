@@ -14,6 +14,9 @@ export default function Home() {
   const [mousePos, setMousePos] = useState<XY>({ x: 0, y: 0 });
   const [isOverBusinessCard, setIsOverBusinessCard] = useState<boolean>(false);
   const [isOverProject, setIsOverProject] = useState<boolean>(false);
+  const [isLoadingHero, setIsLoadingHero] = useState<boolean>(true);
+  const [loadPct, setLoadPct] = useState<number>(1);
+  const [hideOverlay, setHideOverlay] = useState<boolean>(false);
 
   // ---- helpers --------------------------------------------------------------
   const getNavHeight = (): number => {
@@ -134,8 +137,28 @@ export default function Home() {
       {/* Navigation */}
       <Navigation />
 
+      {/* Loading overlay for hourglass */}
+      {(!hideOverlay && isLoadingHero) && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black transition-opacity duration-500" style={{ opacity: isLoadingHero ? 1 : 0 }}>
+          <div className="w-[72%] max-w-[560px]">
+            <div className="h-2 w-full bg-white/20 overflow-hidden" aria-label="Loading hourglass" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={loadPct}>
+              <div className="h-full bg-indigo-400 transition-[width] duration-200 ease-out" style={{ width: `${loadPct}%` }} />
+            </div>
+            <div className="mt-3 text-xs text-white/70 text-center">{loadPct < 100 ? `${loadPct}%` : 'Completed'}</div>
+          </div>
+        </div>
+      )}
+
       {/* Full-bleed Home Header */}
-      <HourglassHero />
+      <HourglassHero
+        onProgress={(p) => setLoadPct(p)}
+        onLoaded={() => {
+          setLoadPct(100);
+          setIsLoadingHero(false);
+          // allow fade-out to complete before removing from DOM
+          setTimeout(() => setHideOverlay(true), 550);
+        }}
+      />
 
       {/* Main content (matches your site gutters) */}
       <main className="px-6 md:px-12">

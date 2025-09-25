@@ -43,6 +43,7 @@ export default function AboutSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.8, delay: 0.2 }}
+      id="about"
       className="pt-[144px] pb-[72px]"
     >
       <div className="grid md:grid-cols-12">

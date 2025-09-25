@@ -36,7 +36,9 @@ type StencilMaterial = MeshBasicMaterial & {
   stencilFail: number;
 };
 
-export default function HourglassHero() {
+export default function HourglassHero(
+  { onLoaded, onProgress }: { onLoaded?: () => void; onProgress?: (pct: number) => void } = {}
+) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -152,7 +154,33 @@ export default function HourglassHero() {
 
       // -------------------- Load GLTF --------------------
       const loader = new GLTFLoader();
-      loader.load('/hourglass_V4.5.glb', (gltf: GLTF) => {
+      let fallbackStart = performance.now();
+      let lastFallbackPct = 0;
+      let usingFallback = false;
+      let fallbackRaf: number | null = null;
+
+      function startFallbackProgress() {
+        if (!onProgress) return;
+        usingFallback = true;
+        const start = fallbackStart;
+        const duration = 2500; // ms to reach ~85%
+        const tick = () => {
+          const t = Math.min(1, (performance.now() - start) / duration);
+          // Ease-out curve toward 85%
+          const eased = 1 - Math.pow(1 - t, 3);
+          const pct = Math.min(85, Math.max(1, Math.round(eased * 85)));
+          if (pct !== lastFallbackPct) {
+            lastFallbackPct = pct;
+            try { onProgress(pct); } catch {}
+          }
+          if (t < 1 && usingFallback) fallbackRaf = requestAnimationFrame(tick);
+        };
+        tick();
+      }
+
+      loader.load(
+        '/hourglass_V4.5.glb',
+        (gltf: GLTF) => {
         const root = gltf.scene as Group;
         root.scale.set(1.25, 1.25, 1.25);
 
@@ -361,6 +389,26 @@ export default function HourglassHero() {
           if (t < 1) requestAnimationFrame(animatePose);
         }
         requestAnimationFrame(animatePose);
+        // Stop fallback progression and jump to 100
+        usingFallback = false;
+        if (fallbackRaf) cancelAnimationFrame(fallbackRaf);
+        try { onProgress && onProgress(100); } catch {}
+        // Notify parent that the hourglass finished initial load
+        try { onLoaded && onLoaded(); } catch {}
+      },
+      (evt) => {
+        if (!onProgress) return;
+        const total = evt.total || 0;
+        const loaded = evt.loaded || 0;
+        if (total > 0) {
+          // Real network progress
+          const pct = Math.min(100, Math.max(1, Math.round((loaded / total) * 100)));
+          usingFallback = false;
+          try { onProgress(pct); } catch {}
+        } else {
+          // Some servers don't send total; use a smooth fallback
+          if (!usingFallback) startFallbackProgress();
+        }
       });
 
       // -------------------- Loop --------------------
@@ -406,6 +454,31 @@ export default function HourglassHero() {
 
       {/* Canvas host */}
       <div ref={containerRef} className="relative w-full h-[75vh] md:h-[85vh] lg:h-[92vh] max-w-none" />
+
+      {/* Bouncing arrow to next section (Projects) */}
+      <a
+        href="#about"
+        className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-[2000] text-black hover:text-indigo-600 focus:text-indigo-600 transition-colors"
+        aria-label="Scroll to About section"
+        onClick={(e) => {
+          e.preventDefault();
+          const el = document.getElementById('about');
+          if (!el) { window.location.hash = '#about'; return; }
+          const wrapperEl = document.querySelector('div.fixed.top-0');
+          const navH = wrapperEl
+            ? (wrapperEl as HTMLElement).getBoundingClientRect().height
+            : (document.querySelector('nav') as HTMLElement | null)?.getBoundingClientRect().height || 0;
+          const paddingTop = parseFloat(window.getComputedStyle(el).paddingTop || '0') || 0;
+          const y = el.getBoundingClientRect().top + window.scrollY + Math.min(40, paddingTop * 0.25) - navH;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }}
+      >
+        <div className="animate-bounce">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+            <path d="M12 16.5a1 1 0 0 1-.7-.29l-6-6a1 1 0 1 1 1.4-1.42L12 14.09l5.3-5.3a1 1 0 0 1 1.4 1.42l-6 6a1 1 0 0 1-.7.29Z" />
+          </svg>
+        </div>
+      </a>
     </section>
   );
 }
