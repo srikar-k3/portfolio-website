@@ -242,7 +242,7 @@ export default function HourglassHero(
         } else {
           sumTex.needsUpdate = true;
         }
-        const mat = maskedText.material as THREE.MeshBasicMaterial | null;
+        const mat = maskedText.material as MeshBasicMaterial | null;
         if (mat && sumTex) {
           mat.map = sumTex;
           mat.needsUpdate = true;
