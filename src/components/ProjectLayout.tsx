@@ -37,7 +37,7 @@ type ProjectLayoutProps = {
   children: ReactNode;
 };
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export default function ProjectLayout({
   projectId,

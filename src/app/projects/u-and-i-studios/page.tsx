@@ -9,7 +9,7 @@ import ProjectLayout, {
   SectionText,
 } from '@/components/ProjectLayout';
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 function BeforeAfterSlider() {
   const [sliderPosition, setSliderPosition] = useState(50);

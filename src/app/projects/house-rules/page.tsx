@@ -10,7 +10,7 @@ import ProjectLayout, {
 } from '@/components/ProjectLayout';
 import { motion } from 'framer-motion';
 
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export default function HouseRules() {
   const [imgSwap, setImgSwap] = useState(false);
