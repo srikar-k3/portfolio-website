@@ -14,9 +14,9 @@ const projectOrder = [
   { id: 'victory-in-volumes', title: 'Victory In Volumes', category: 'Branding' },
   { id: 'rutgers-sapa', title: 'Rutgers SAPA', category: 'Brand Identity' },
   { id: 'u-and-i-studios', title: 'U&I Studios', category: 'Video Production' },
+  { id: 'lambda-tech-services', title: 'Lambda Tech Services', category: 'Brand Identity' },
   { id: 'introduction-videos', title: 'Introduction Videos', category: 'Video Production' },
   { id: 'stage-background-visuals', title: 'Stage Background Visuals', category: 'Motion Graphics' },
-  { id: 'lambda-tech-services', title: 'Lambda Tech Services', category: 'Brand Identity' },
 ];
 
 type ProjectMeta = {

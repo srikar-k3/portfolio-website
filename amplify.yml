@@ -1,0 +1,23 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install 18
+        - nvm use 18
+        - npm ci
+    build:
+      commands:
+        # Write Amplify env vars into .env.production so Next.js
+        # bundles them into the server runtime (SSR / API routes).
+        - |
+          printenv | grep -E '^(SMTP_|CONTACT_TO)' > .env.production
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
