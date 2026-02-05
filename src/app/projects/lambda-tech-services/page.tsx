@@ -87,7 +87,7 @@ export default function LambdaTechServices() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-          className="rounded-xl md:rounded-2xl overflow-hidden"
+          className="rounded-xl md:rounded-2xl overflow-hidden max-w-[1100px] mx-auto"
         >
           <div className="flex group" style={{ aspectRatio: '4/1' }}>
             <div
