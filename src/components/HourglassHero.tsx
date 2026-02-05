@@ -159,7 +159,7 @@ export default function HourglassHero(
       const canvas = renderer.domElement as HTMLCanvasElement;
       try {
         canvas.style.touchAction = 'pan-y pinch-zoom';
-        canvas.style.WebkitUserSelect = 'none';
+        canvas.style.webkitUserSelect = 'none';
         canvas.style.userSelect = 'none';
       } catch {}
       const touchGuard = (ev: TouchEvent) => {
