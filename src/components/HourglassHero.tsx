@@ -86,7 +86,7 @@ export default function HourglassHero(
       // Allow vertical scrolling gestures to pass through on touch devices
       try {
         (renderer.domElement as HTMLCanvasElement).style.touchAction = 'pan-y pinch-zoom';
-        (renderer.domElement as HTMLCanvasElement).style.WebkitUserSelect = 'none';
+        (renderer.domElement as HTMLCanvasElement).style.webkitUserSelect = 'none';
         (renderer.domElement as HTMLCanvasElement).style.userSelect = 'none';
       } catch {}
       // Context loss/resume guards
