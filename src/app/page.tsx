@@ -13,7 +13,7 @@ export default function Home() {
   const [isOverBusinessCard, setIsOverBusinessCard] = useState<boolean>(false);
   const [isOverProject, setIsOverProject] = useState<boolean>(false);
   const [isLoadingHero, setIsLoadingHero] = useState<boolean>(true);
-  const [loadPct, setLoadPct] = useState<number>(1);
+  const [, setLoadPct] = useState<number>(1);
   const [hideOverlay, setHideOverlay] = useState<boolean>(false);
   const [playSplit, setPlaySplit] = useState<boolean>(false);
   const loaderRootRef = useRef<HTMLDivElement | null>(null);
@@ -27,8 +27,7 @@ export default function Home() {
     let done = false;
     (async () => {
       try {
-        // @ts-ignore
-        if (document.fonts && document.fonts.ready) { await (document.fonts as any).ready; }
+        if (document.fonts?.ready) { await document.fonts.ready; }
       } catch {}
       if (done) return;
       requestAnimationFrame(() => setLoaderReady(true));
@@ -250,8 +249,7 @@ export default function Home() {
               const measureAndPlay = async () => {
                 try {
                   // Ensure fonts/layout are ready
-                  // @ts-ignore
-                  if (document.fonts && document.fonts.ready) { await (document.fonts as any).ready; }
+                  if (document.fonts?.ready) { await document.fonts.ready; }
                 } catch {}
                 // Two RAFs to settle layout
                 await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -280,7 +278,6 @@ export default function Home() {
                     root.style.setProperty('--right-y', `${dyR}px`);
                   }
                 } catch {}
-                const root = loaderRootRef.current;
                 const overlayEl = overlayRef.current;
                 const leftEl = loaderLeftRef.current;
                 const rightEl = loaderRightRef.current;
@@ -289,24 +286,24 @@ export default function Home() {
                   if (++doneCount < 2) return; // wait for both left and right
                   setOverlayFade(true);
                   if (overlayEl) {
-                    const onFadeEnd = (ev: TransitionEvent) => {
-                      if (ev.propertyName === 'opacity') {
+                    const onFadeEnd = (ev: Event) => {
+                      if ((ev as TransitionEvent).propertyName === 'opacity') {
                         setHideOverlay(true);
-                        overlayEl.removeEventListener('transitionend', onFadeEnd as any);
+                        overlayEl.removeEventListener('transitionend', onFadeEnd);
                       }
                     };
-                    overlayEl.addEventListener('transitionend', onFadeEnd as any);
+                    overlayEl.addEventListener('transitionend', onFadeEnd);
                   } else {
                     setHideOverlay(true);
                   }
                   // cleanup listeners
-                  if (leftEl) leftEl.removeEventListener('transitionend', onLeftEnd as any);
-                  if (rightEl) rightEl.removeEventListener('transitionend', onRightEnd as any);
+                  if (leftEl) leftEl.removeEventListener('transitionend', onLeftEnd);
+                  if (rightEl) rightEl.removeEventListener('transitionend', onRightEnd);
                 };
-                const onLeftEnd = (e: TransitionEvent) => { if (e.propertyName === 'transform') tryFade(); };
-                const onRightEnd = (e: TransitionEvent) => { if (e.propertyName === 'transform') tryFade(); };
-                if (leftEl) leftEl.addEventListener('transitionend', onLeftEnd as any);
-                if (rightEl) rightEl.addEventListener('transitionend', onRightEnd as any);
+                const onLeftEnd = (e: Event) => { if ((e as TransitionEvent).propertyName === 'transform') tryFade(); };
+                const onRightEnd = (e: Event) => { if ((e as TransitionEvent).propertyName === 'transform') tryFade(); };
+                if (leftEl) leftEl.addEventListener('transitionend', onLeftEnd);
+                if (rightEl) rightEl.addEventListener('transitionend', onRightEnd);
                 // Small delay so combined has presence before splitting
                 setTimeout(() => setPlaySplit(true), 600);
                 // Safety: ensure overlay disappears even if transitionend is missed

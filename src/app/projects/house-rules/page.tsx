@@ -7,7 +7,6 @@ import ProjectLayout, {
   SectionTitle,
   SectionText,
   ProjectImage,
-  ImageGrid,
 } from '@/components/ProjectLayout';
 import { motion } from 'framer-motion';
 

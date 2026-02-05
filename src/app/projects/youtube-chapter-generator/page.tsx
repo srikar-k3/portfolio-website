@@ -4,7 +4,6 @@ import ProjectLayout, {
   ProjectSection,
   SectionTitle,
   SectionText,
-  ProjectImage,
 } from '@/components/ProjectLayout';
 
 export default function YouTubeChapterGenerator() {

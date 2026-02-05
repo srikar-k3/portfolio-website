@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import ProjectLayout, {
   ProjectSection,
@@ -9,7 +9,6 @@ import ProjectLayout, {
   SectionText,
   ProjectImage,
   ImageGrid,
-  Blockquote,
 } from '@/components/ProjectLayout';
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];

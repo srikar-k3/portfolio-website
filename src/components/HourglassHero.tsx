@@ -393,9 +393,9 @@ export default function HourglassHero(
         renderer.dispose();
         try {
           const c = renderer.domElement as HTMLCanvasElement;
-          c.removeEventListener('touchstart', touchGuard as any, true);
-          c.removeEventListener('touchmove', touchGuard as any, true);
-          c.removeEventListener('touchend', touchGuard as any, true);
+          c.removeEventListener('touchstart', touchGuard as EventListener, true);
+          c.removeEventListener('touchmove', touchGuard as EventListener, true);
+          c.removeEventListener('touchend', touchGuard as EventListener, true);
         } catch {}
         if (renderer.domElement?.parentElement) {
           renderer.domElement.parentElement.removeChild(renderer.domElement);
