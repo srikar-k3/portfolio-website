@@ -24,6 +24,7 @@ export default function ContactSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMsg, setSubmitMsg] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -53,6 +54,7 @@ export default function ContactSection() {
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setSubmitMsg(null);
+    setIsSuccess(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -78,6 +80,7 @@ export default function ContactSection() {
       }
 
       setSubmitMsg('Message sent!');
+      setIsSuccess(true);
       setFormData({ name: '', email: '', workType: '', timeframe: '', comments: '' });
     } catch (err: unknown) {
       const msg =
@@ -284,11 +287,27 @@ export default function ContactSection() {
                 </button>
 
                 {/* Status message */}
-                <div className="mt-3 min-h-[1.25rem] text-center" aria-live="polite">
+                <div className="mt-4 min-h-[1.25rem]" aria-live="polite">
                   {submitMsg && (
-                    <span className={`text-sm font-medium ${/sent!/i.test(submitMsg) ? 'text-green-600' : 'text-red-500'}`}>
-                      {submitMsg}
-                    </span>
+                    isSuccess ? (
+                      <div className="flex items-center gap-3 bg-gray-900 text-white rounded-xl px-5 py-3.5 animate-[fadeSlideUp_0.4s_ease-out_both]">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="font-medium text-sm tracking-wide">Message sent — I&apos;ll be in touch soon.</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-3.5 animate-[fadeSlideUp_0.4s_ease-out_both]">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                        <span className="font-medium text-sm tracking-wide">{submitMsg}</span>
+                      </div>
+                    )
                   )}
                 </div>
               </div>
