@@ -36,8 +36,9 @@ export async function GET() {
 type ContactBody = {
   name?: string;
   email?: string;
-  purpose?: string;
-  message?: string;
+  workType?: string;
+  timeframe?: string;
+  comments?: string;
 };
 
 export async function POST(req: Request) {
@@ -51,10 +52,9 @@ export async function POST(req: Request) {
     const raw = (await req.json()) as unknown;
     const body = raw as ContactBody;
 
-    const { name, email, purpose } = body;
-    const message = body.message ?? "";
+    const { name, email, workType, timeframe, comments } = body;
 
-    if (!name || !email || !message) {
+    if (!name || !email) {
       return NextResponse.json(
         { ok: false, error: "Missing required fields" },
         { status: 400 }
@@ -93,13 +93,15 @@ export async function POST(req: Request) {
       from: `"${name}" <${SMTP_USER}>`,
       to: CONTACT_TO,
       replyTo: email,
-      subject: `Portfolio Contact — ${purpose || "General"}`,
-      text: `Name: ${name}\nEmail: ${email}\nPurpose: ${purpose || ""}\n\n${message}`,
+      subject: `Portfolio Contact — ${workType || "General"}`,
+      text: `Name: ${name}\nEmail: ${email}\nType of Work: ${workType || ""}\nTimeframe: ${timeframe || ""}\n\nAdditional Comments:\n${comments || "(none)"}`,
       html: `
         <p><strong>Name:</strong> ${escapeHtml(name)}</p>
         <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Purpose:</strong> ${escapeHtml(purpose || "")}</p>
-        <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
+        <p><strong>Type of Work:</strong> ${escapeHtml(workType || "")}</p>
+        <p><strong>Timeframe:</strong> ${escapeHtml(timeframe || "")}</p>
+        <p><strong>Additional Comments:</strong></p>
+        <p>${escapeHtml(comments || "(none)").replace(/\n/g, '<br/>')}</p>
       `,
     };
 

@@ -1,6 +1,5 @@
 'use client';
 
-import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AboutSection from '@/components/AboutSection';
 import { motion } from 'framer-motion';
@@ -52,7 +51,7 @@ export default function AboutPage() {
         aria-hidden="true"
       />
 
-      <Navigation />
+      {/* Navigation removed */}
 
       <main className="px-6 md:px-12">
         <div className="max-w-[1300px] mx-auto">

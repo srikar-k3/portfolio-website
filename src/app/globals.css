@@ -3,9 +3,54 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Define font CSS variables to align with previous next/font usage */
+
+  /* Typography */
   --font-figtree: 'Figtree';
   --font-nunito-sans: 'Nunito Sans';
+
+  /* Colors - Portfolio Palette */
+  --color-surface-dark: #0a0a0a;
+  --color-surface-darker: #000000;
+  --color-accent: #6366f1; /* indigo-500 */
+  --color-accent-soft: rgba(99, 102, 241, 0.35);
+  --color-accent-glow: rgba(99, 102, 241, 0.15);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d1d5db; /* gray-300 */
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-border-medium: rgba(255, 255, 255, 0.2);
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Animation */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-smooth: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+
+  /* Shadows & Effects */
+  --shadow-glow-sm: 0 0 12px rgba(255, 255, 255, 0.1);
+  --shadow-glow-md: 0 0 24px rgba(255, 255, 255, 0.15);
+  --shadow-glow-accent: 0 0 20px var(--color-accent-glow);
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
 }
 
 /* Self-hosted fonts (drop files into public/fonts/* as documented) */
@@ -146,13 +191,399 @@ html, body {
   font-family: var(--font-nunito-sans), sans-serif;
 }
 
-/* Ensure headings use Figtree */
+/* Smoother native scrolling and stable layout on desktop scrollbars */
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable both-edges;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Ensure headings use Figtree with refined tracking */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-figtree), sans-serif;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw + 0.5rem, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw + 0.25rem, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2vw + 0.25rem, 1.5rem);
+  font-weight: 500;
+}
+
+/* Body text refinements */
+p {
+  line-height: 1.7;
+  letter-spacing: 0.005em;
+}
+
+/* Large body text for important paragraphs */
+.text-body-lg {
+  font-size: clamp(1.125rem, 1vw + 0.75rem, 1.25rem);
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+}
+
+/* Small caps for labels */
+.text-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 
 /* Radial gradient utility for navigation hover effects */
 .bg-gradient-radial {
   background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* ============================================
+   PORTFOLIO DESIGN SYSTEM - UTILITY CLASSES
+   ============================================ */
+
+/* Dark gradient background - used across all pages */
+.bg-portfolio-dark {
+  background: linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%);
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4.5' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* Enhanced mouse glow effect */
+.mouse-glow {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    transparent 65%
+  );
+  border-radius: 50%;
+  filter: blur(35px);
+  transition: opacity var(--duration-normal) var(--ease-out-quart);
+}
+
+/* Focus visible states for accessibility */
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Interactive element base */
+.interactive {
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    opacity var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart);
+}
+.interactive:hover {
+  transform: translateY(-1px);
+}
+.interactive:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition:
+    transform var(--duration-normal) var(--ease-out-expo),
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-out-expo);
+}
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-glow-md);
+  border-color: var(--color-border-medium);
+}
+
+/* Text gradient effect */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smooth underline animation */
+.underline-animate {
+  position: relative;
+  display: inline-block;
+}
+.underline-animate::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-normal) var(--ease-out-expo);
+}
+.underline-animate:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-border-subtle) 20%,
+    var(--color-border-subtle) 80%,
+    transparent 100%
+  );
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* Subtle entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-slower) var(--ease-out-expo) forwards;
+}
+
+/* Stagger children animation */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp var(--duration-slower) var(--ease-out-expo) forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 400ms; }
+
+/* Pulse glow animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Button styles */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  background: var(--color-text-primary);
+  color: var(--color-surface-darker);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart),
+    background var(--duration-fast) var(--ease-out-quart);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-md);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-medium);
+  background: transparent;
+  color: var(--color-text-primary);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    background var(--duration-fast) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-text-primary);
+  transform: translateY(-2px);
+}
+.btn-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Input focus enhancement */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-text-primary);
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .mouse-glow,
+  .noise-overlay {
+    display: none;
+  }
+}
+
+/* ============================================
+   PROJECTS SECTION - RESPONSIVE HEIGHT HANDLING
+   ============================================ */
+
+/*
+ * Handle constrained viewport heights to prevent
+ * project cards from overlapping with the dock.
+ * Uses max-height constraints on cards that scale
+ * with viewport height.
+ *
+ * Calculation breakdown:
+ * - Header area: ~80-100px
+ * - Dock + bottom spacing: ~120-140px
+ * - Caption height per row: ~28px
+ * - Gap between rows: ~12-16px
+ * - Available for 2 rows of cards: 100svh - header - dock - 2*caption - gap
+ */
+.project-card {
+  /* Base max-height that scales with viewport - conservative calculation */
+  max-height: calc((100svh - 320px) / 2);
+}
+
+/* Medium viewports */
+@media (max-height: 700px) {
+  .project-card {
+    max-height: calc((100svh - 300px) / 2);
+  }
+}
+
+/* Short viewports (e.g., landscape phones, small laptops) */
+@media (max-height: 600px) {
+  .project-card {
+    max-height: calc((100svh - 280px) / 2);
+  }
+}
+
+/* Very short viewports */
+@media (max-height: 500px) {
+  .project-card {
+    max-height: calc((100svh - 250px) / 2);
+  }
+}
+
+/* Taller viewports don't need height constraints, let aspect-ratio work normally */
+@media (min-height: 900px) {
+  .project-card {
+    max-height: none;
+  }
 }

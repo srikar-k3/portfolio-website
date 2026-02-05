@@ -1,12 +1,10 @@
 'use client';
-
-import Navigation from '@/components/Navigation';
 import HourglassHero from '@/components/HourglassHero';
 import AboutSection from '@/components/AboutSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 type XY = { x: number; y: number };
 
@@ -17,6 +15,26 @@ export default function Home() {
   const [isLoadingHero, setIsLoadingHero] = useState<boolean>(true);
   const [loadPct, setLoadPct] = useState<number>(1);
   const [hideOverlay, setHideOverlay] = useState<boolean>(false);
+  const [playSplit, setPlaySplit] = useState<boolean>(false);
+  const loaderRootRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const loaderLeftRef = useRef<HTMLSpanElement | null>(null);
+  const loaderRightRef = useRef<HTMLSpanElement | null>(null);
+  const [overlayFade, setOverlayFade] = useState(false);
+  const [loaderReady, setLoaderReady] = useState(false);
+
+  useEffect(() => {
+    let done = false;
+    (async () => {
+      try {
+        // @ts-ignore
+        if (document.fonts && document.fonts.ready) { await (document.fonts as any).ready; }
+      } catch {}
+      if (done) return;
+      requestAnimationFrame(() => setLoaderReady(true));
+    })();
+    return () => { done = true; };
+  }, []);
   const [rampActive, setRampActive] = useState<boolean>(true);
 
   // Time-based ramp to ensure visible progression even without total bytes
@@ -40,10 +58,7 @@ export default function Home() {
   }, [isLoadingHero, rampActive]);
 
   // ---- helpers --------------------------------------------------------------
-  const getNavHeight = (): number => {
-    const navEl = document.querySelector('nav') as HTMLElement | null;
-    return navEl?.getBoundingClientRect().height ?? 80;
-  };
+  const getNavHeight = (): number => 0;
   // --------------------------------------------------------------------------
 
   useEffect(() => {
@@ -131,59 +146,179 @@ export default function Home() {
       className="min-h-screen text-white relative w-full"
       style={{ background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)' }}
     >
-      {/* Subtle noise overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.08] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Subtle noise overlay - using CSS class from globals */}
+      <div className="noise-overlay" />
 
-      {/* Global mouse glow effect - behind all content */}
+      {/* Global mouse glow effect - enhanced */}
       <div
-        className="fixed pointer-events-none z-0 transition-opacity duration-300"
+        className="mouse-glow"
         style={{
-          left: mousePos.x - 75,
-          top: mousePos.y - 75,
-          width: 150,
-          height: 150,
-          background:
-            'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
-          borderRadius: '50%',
-          filter: 'blur(30px)',
+          left: mousePos.x - 90,
+          top: mousePos.y - 90,
           opacity: isOverBusinessCard || isOverProject ? 0 : 1,
         }}
       />
 
-      {/* Navigation */}
-      <Navigation />
+      {/* Navigation removed per request */}
 
-      {/* Loading overlay for hourglass */}
-      {(!hideOverlay && isLoadingHero) && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black transition-opacity duration-500" style={{ opacity: isLoadingHero ? 1 : 0 }}>
-          <div className="w-[72%] max-w-[560px]">
-            <div className="h-2 w-full bg-white/20 overflow-hidden" aria-label="Loading hourglass" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={loadPct}>
-              <div className="h-full bg-indigo-400 transition-[width] duration-200 ease-out" style={{ width: `${loadPct}%` }} />
+      {/* Loading overlay for hourglass - enhanced */}
+      {!hideOverlay && (
+        <div ref={overlayRef} className={`overlay fixed inset-0 z-[1000] flex items-center justify-center bg-black ${overlayFade ? 'fadeout' : ''}`}>
+          {/* Subtle radial gradient behind loader */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.08)_0%,transparent_50%)]" />
+
+          <div ref={loaderRootRef} className={`loader ${playSplit ? 'split' : 'idle'}`} aria-hidden>
+            <div className={`loader-words ${loaderReady ? 'ready' : 'hidden'} uppercase tracking-[0.18em] text-white text-xs sm:text-sm font-normal`}>
+              <span className="combined">SRKRFOLIO</span>
+              <span ref={loaderLeftRef} className="left" style={{ opacity: 0, visibility: 'hidden' }}>SRKR</span>
+              <span ref={loaderRightRef} className="right" style={{ opacity: 0, visibility: 'hidden' }}>PORTFOLIO</span>
             </div>
-            <div className="mt-3 text-xs text-white/70 text-center">{loadPct < 100 ? `${loadPct}%` : 'Completed'}</div>
           </div>
+          <style jsx>{`
+            .overlay {
+              opacity: 1;
+              transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+              will-change: opacity;
+            }
+            .overlay.fadeout { opacity: 0; }
+            .loader { position: relative; }
+            .loader-words { position: relative; width: 100%; height: 1em; }
+            .loader-words.hidden { opacity: 0; }
+            .loader-words.ready { opacity: 1; transition: opacity .3s ease; }
+            /* Combined word fades in smoothly */
+            .loader-words .combined {
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(.97);
+              letter-spacing: 0.22em;
+            }
+            .loader-words.ready .combined {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+              transition: opacity .6s ease, transform .6s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing .6s ease;
+              letter-spacing: 0.18em;
+            }
+            /* Center only top-level loader spans */
+            .loader-words > span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; }
+            /* Prevent pre-split bleed */
+            .loader-words .left, .loader-words .right { opacity: 0; visibility: hidden; }
+            /* Idle state */
+            .loader.idle .left, .loader.idle .right {
+              opacity: 0;
+              visibility: hidden;
+              transform: translate(-50%, -50%);
+              transition: transform 1.1s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+            }
+            /* Split animation */
+            .loader.split .combined {
+              opacity: 0;
+              visibility: hidden;
+              transform: translate(-50%, -50%) scale(.97);
+              transition: opacity .25s ease, transform .25s ease;
+            }
+            .loader.split .left, .loader.split .right { opacity: 1; visibility: visible; }
+            .loader.split .left {
+              transform: translate(-50%, -50%) translate(var(--left-x, -42vw), var(--left-y, 0px));
+              transition: transform 1.1s cubic-bezier(.16,1,.3,1);
+            }
+            .loader.split .right {
+              transform: translate(-50%, -50%) translate(var(--right-x, 42vw), var(--right-y, 0px));
+              transition: transform 1.1s cubic-bezier(.16,1,.3,1);
+            }
+          `}</style>
         </div>
       )}
 
-      {/* Full-bleed Home Header */}
-      <HourglassHero
-        onProgress={(p) => {
-          // If real progress arrives, prefer it and pause the ramp from pulling backwards
-          setRampActive(false);
-          setLoadPct((prev) => (p > prev ? p : prev));
-        }}
-        onLoaded={() => {
-          setLoadPct(100);
-          setIsLoadingHero(false);
-          // allow fade-out to complete before removing from DOM
-          setTimeout(() => setHideOverlay(true), 550);
-        }}
-      />
+      {/* HERO — sticky scene over a tall track, white background */}
+      <section id="hero" className="relative h-[200vh] bg-white">
+        <div className="sticky top-0 h-screen overflow-hidden flex items-stretch">
+          <HourglassHero
+            onProgress={(p) => {
+              setRampActive(false);
+              setLoadPct((prev) => (p > prev ? p : prev));
+            }}
+            onLoaded={() => {
+              setLoadPct(100);
+              setIsLoadingHero(false);
+              const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              if (prefersReduced) {
+                // Skip split: fade overlay only
+                setOverlayFade(true);
+                setTimeout(() => setHideOverlay(true), 2000);
+                return;
+              }
+              // Measure target positions and animate to exact hero overlay positions
+              const measureAndPlay = async () => {
+                try {
+                  // Ensure fonts/layout are ready
+                  // @ts-ignore
+                  if (document.fonts && document.fonts.ready) { await (document.fonts as any).ready; }
+                } catch {}
+                // Two RAFs to settle layout
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+                try {
+                  const leftTarget = document.getElementById('hero-label-left');
+                  const rightTarget = document.getElementById('hero-label-right');
+                  const leftNode = loaderLeftRef.current;
+                  const rightNode = loaderRightRef.current;
+                  const root = loaderRootRef.current;
+                  if (leftTarget && rightTarget && leftNode && rightNode && root) {
+                    // Clear inline hiding so measurements are correct post-split start
+                    leftNode.style.removeProperty('opacity');
+                    leftNode.style.removeProperty('visibility');
+                    rightNode.style.removeProperty('opacity');
+                    rightNode.style.removeProperty('visibility');
+                    const ltr = leftTarget.getBoundingClientRect();
+                    const rtr = rightTarget.getBoundingClientRect();
+                    const lsr = leftNode.getBoundingClientRect();
+                    const rsr = rightNode.getBoundingClientRect();
+                    // Edge-aligned deltas for optical precision
+                    const dxL = ltr.left - lsr.left; const dyL = ltr.top - lsr.top;
+                    const dxR = rtr.right - rsr.right; const dyR = rtr.top - rsr.top;
+                    root.style.setProperty('--left-x', `${dxL}px`);
+                    root.style.setProperty('--left-y', `${dyL}px`);
+                    root.style.setProperty('--right-x', `${dxR}px`);
+                    root.style.setProperty('--right-y', `${dyR}px`);
+                  }
+                } catch {}
+                const root = loaderRootRef.current;
+                const overlayEl = overlayRef.current;
+                const leftEl = loaderLeftRef.current;
+                const rightEl = loaderRightRef.current;
+                let doneCount = 0;
+                const tryFade = () => {
+                  if (++doneCount < 2) return; // wait for both left and right
+                  setOverlayFade(true);
+                  if (overlayEl) {
+                    const onFadeEnd = (ev: TransitionEvent) => {
+                      if (ev.propertyName === 'opacity') {
+                        setHideOverlay(true);
+                        overlayEl.removeEventListener('transitionend', onFadeEnd as any);
+                      }
+                    };
+                    overlayEl.addEventListener('transitionend', onFadeEnd as any);
+                  } else {
+                    setHideOverlay(true);
+                  }
+                  // cleanup listeners
+                  if (leftEl) leftEl.removeEventListener('transitionend', onLeftEnd as any);
+                  if (rightEl) rightEl.removeEventListener('transitionend', onRightEnd as any);
+                };
+                const onLeftEnd = (e: TransitionEvent) => { if (e.propertyName === 'transform') tryFade(); };
+                const onRightEnd = (e: TransitionEvent) => { if (e.propertyName === 'transform') tryFade(); };
+                if (leftEl) leftEl.addEventListener('transitionend', onLeftEnd as any);
+                if (rightEl) rightEl.addEventListener('transitionend', onRightEnd as any);
+                // Small delay so combined has presence before splitting
+                setTimeout(() => setPlaySplit(true), 600);
+                // Safety: ensure overlay disappears even if transitionend is missed
+                // Safety fallback: start fade after a comfortable timeout if events are missed
+                setTimeout(() => { setOverlayFade(true); setTimeout(() => setHideOverlay(true), 2000); }, 3000);
+              };
+              measureAndPlay();
+            }}
+            hideOverlays={!hideOverlay}
+          />
+        </div>
+      </section>
 
       {/* Main content (matches your site gutters) */}
       <main className="px-6 md:px-12">

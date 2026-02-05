@@ -10,9 +10,7 @@ import type {
   Group,
   HemisphereLight,
   Mesh,
-  MeshBasicMaterial,
   MeshPhysicalMaterial,
-  CanvasTexture,
   Object3D,
   PerspectiveCamera,
   PMREMGenerator,
@@ -23,26 +21,22 @@ import type {
 } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-type HUDUserData = {
-  _hudPlanes?: Mesh[];
-  _placeHUD?: () => void;
-};
-
-type StencilMaterial = MeshBasicMaterial & {
-  stencilWrite: boolean;
-  stencilRef: number;
-  stencilFunc: number;
-  stencilZPass: number;
-  stencilZFail: number;
-  stencilFail: number;
-};
+type HUDUserData = Record<string, unknown>;
 
 export default function HourglassHero(
-  { onLoaded, onProgress }: { onLoaded?: () => void; onProgress?: (pct: number) => void } = {}
+  { onLoaded, onProgress, hideOverlays }: { onLoaded?: () => void; onProgress?: (pct: number) => void; hideOverlays?: boolean } = {}
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   // Make the canvas host invisible until we confirm a frame with the model
   const hostRef = useRef<HTMLDivElement | null>(null);
+  // Root of the hero composition (hourglass + labels + categories + chevron)
+  const heroRootRef = useRef<HTMLElement | null>(null);
+  // Categories row container (bracketed text)
+  const categoriesRef = useRef<HTMLDivElement | null>(null);
+  // Labels overlay (SRKR / PORTFOLIO)
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  // Chevron button
+  const chevronRef = useRef<HTMLButtonElement | null>(null);
   // Stable callback refs so we can keep effect deps []
   const onLoadedRef = useRef(onLoaded);
   const onProgressRef = useRef(onProgress);
@@ -68,10 +62,7 @@ export default function HourglassHero(
       if (!containerEl) return;
 
       // -------------------- Tunables --------------------
-      const HUD_DISTANCE = 2.4;
-
-      const PLANE_W = 3.6;
-      const PLANE_H = 1.6;
+      // HUD overlay removed in redesign
 
       const GLASS_SURFACE_COLOR = 0xa5b4fc;
       const GLASS_ATTEN_COLOR = 0xaec2ff;
@@ -93,6 +84,12 @@ export default function HourglassHero(
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.0;
       containerEl.appendChild(renderer.domElement);
+      // Allow vertical scrolling gestures to pass through on touch devices
+      try {
+        (renderer.domElement as HTMLCanvasElement).style.touchAction = 'pan-y pinch-zoom';
+        (renderer.domElement as HTMLCanvasElement).style.WebkitUserSelect = 'none';
+        (renderer.domElement as HTMLCanvasElement).style.userSelect = 'none';
+      } catch {}
       // Context loss/resume guards
       let shuttingDown = false;
       let contextLost = false;
@@ -139,9 +136,7 @@ export default function HourglassHero(
       }
 
       let resizeRaf: number | null = null;
-      let layoutRaf: number | null = null;
       let ro: ResizeObserver | null = null;
-      let srkrRO: ResizeObserver | null = null;
       const resize = () => {
         const el = containerRef.current;
         if (!el) return;
@@ -151,15 +146,6 @@ export default function HourglassHero(
         camera.aspect = Math.max(1e-6, w / Math.max(1, h));
         camera.updateProjectionMatrix();
         if (fitRadius) fitCameraForRadius(fitRadius);
-        // Recompute HUD plane sizing vs SRKR height (only when HUD ready)
-        // Defer one extra frame to ensure SRKR's vw/vh-based size has settled
-        if (readyHUD) {
-          if (layoutRaf) cancelAnimationFrame(layoutRaf);
-          // Double-RAF to let CSS vw/vh and font metrics settle after a big->small change
-          layoutRaf = requestAnimationFrame(() => {
-            requestAnimationFrame(() => scheduleLayoutHUD());
-          });
-        }
       };
 
       // -------------------- Controls --------------------
@@ -169,6 +155,32 @@ export default function HourglassHero(
       // Tame drag responsiveness per feedback
       controls.rotateSpeed = 1.4;
       controls.dynamicDampingFactor = 0.12;
+
+      // Mobile touch guard: only allow interaction within a central box; otherwise let page scroll.
+      const canvas = renderer.domElement as HTMLCanvasElement;
+      try {
+        canvas.style.touchAction = 'pan-y pinch-zoom';
+        canvas.style.WebkitUserSelect = 'none';
+        canvas.style.userSelect = 'none';
+      } catch {}
+      const touchGuard = (ev: TouchEvent) => {
+        if (ev.touches && ev.touches.length === 1) {
+          const t = ev.touches[0];
+          const rect = canvas.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const rx = rect.width * 0.18; // central 36% width
+          const ry = rect.height * 0.12; // central 24% height (narrower vertically)
+          const inside = Math.abs(t.clientX - cx) <= rx && Math.abs(t.clientY - cy) <= ry;
+          if (!inside) {
+            // prevent TrackballControls from receiving this touch so that scroll can proceed
+            ev.stopPropagation();
+          }
+        }
+      };
+      canvas.addEventListener('touchstart', touchGuard, { capture: true, passive: true });
+      canvas.addEventListener('touchmove', touchGuard, { capture: true, passive: true });
+      canvas.addEventListener('touchend', touchGuard, { capture: true, passive: true });
 
       // -------------------- Graph --------------------
       const hourglassGroup: Group = new THREE.Group();
@@ -180,74 +192,7 @@ export default function HourglassHero(
       const tiltNode: Group = new THREE.Group();
       axisNode.add(tiltNode);
 
-      // HUD planes (created later)
-      let occPlane: Mesh | null = null;
-      let maskedText: Mesh | null = null;
-      let sumTex: CanvasTexture | null = null;
-      let sumCanvas: HTMLCanvasElement | null = null;
-      let sumCtx: CanvasRenderingContext2D | null = null;
-      const PLANE_ASPECT = 3.6 / 1.6; // keep your design aspect
-      let readyHUD = false;
-
-      const scheduleLayoutHUD = () => {
-        // Only proceed when everything required exists
-        if (!readyHUD) return;
-        const host = containerRef.current;
-        if (!host || !occPlane || !maskedText) return;
-        // Defensive: ensure there are not multiple HUD meshes lingering
-        const toRemove: Object3D[] = [];
-        scene.traverse((obj: Object3D) => {
-          if ((obj as Mesh).isMesh && obj !== occPlane && obj !== maskedText && obj.userData?.hud) {
-            toRemove.push(obj);
-          }
-        });
-        for (const obj of toRemove) {
-          if (obj.parent) obj.parent.remove(obj);
-        }
-        const srkrEl = document.getElementById('srkrRef') as HTMLElement | null;
-        const srkrH = srkrEl?.getBoundingClientRect().height || host.clientHeight * 0.18;
-        const viewH = Math.max(1, host.clientHeight);
-        const d = HUD_DISTANCE;
-        const vFOV = (camera.fov * Math.PI) / 180;
-        const worldH = 2 * d * Math.tan(vFOV / 2) * (srkrH / viewH);
-        const worldW = worldH * PLANE_ASPECT;
-        // Resize planes relative to their base geometry size
-        occPlane.scale.set(worldW / PLANE_W, worldH / PLANE_H, 1);
-        maskedText.scale.copy(occPlane.scale);
-
-        // Regenerate canvas at DPR to match pixel height
-        const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
-        const canvasH = Math.min(2048, Math.max(256, Math.round(srkrH * dpr)));
-        const canvasW = Math.min(4096, Math.max(512, Math.round(canvasH * PLANE_ASPECT)));
-        if (!sumCanvas) {
-          sumCanvas = document.createElement('canvas');
-          sumCtx = sumCanvas.getContext('2d');
-        }
-        if (!sumCanvas || !sumCtx) return;
-        sumCanvas.width = canvasW;
-        sumCanvas.height = canvasH;
-        sumCtx.clearRect(0, 0, canvasW, canvasH);
-        sumCtx.fillStyle = '#000000';
-        sumCtx.textAlign = 'center';
-        sumCtx.textBaseline = 'middle';
-        // Slightly smaller letterforms inside the fixed block height
-        const fontPx = Math.floor(canvasH * 0.28);
-        sumCtx.font = `900 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif`;
-        // Increased separation + adjust for smaller glyphs: raise SUMMIT, lower VISIONS
-        sumCtx.fillText('SUMMIT', canvasW / 2, canvasH * 0.36);
-        sumCtx.fillText('VISIONS', canvasW / 2, canvasH * 0.62);
-        if (!sumTex) {
-          sumTex = new THREE.CanvasTexture(sumCanvas);
-          sumTex.colorSpace = THREE.SRGBColorSpace;
-        } else {
-          sumTex.needsUpdate = true;
-        }
-        const mat = maskedText.material as MeshBasicMaterial | null;
-        if (mat && sumTex) {
-          mat.map = sumTex;
-          mat.needsUpdate = true;
-        }
-      };
+      // HUD/text overlay removed; no scheduleLayoutHUD
 
       // -------------------- Load GLTF --------------------
       const loader = new GLTFLoader();
@@ -359,127 +304,15 @@ export default function HourglassHero(
         tiltNode.add(root);
         modelAdded = true;
 
-        // --------- Stencil mask & HUD planes ----------
-        let maskGeo: Mesh['geometry'] | null = null;
-        if (glass) {
-          if ((glass as Mesh).isMesh) {
-            maskGeo = (glass as Mesh).geometry ?? null;
-          } else {
-            const firstChildMesh = glass.children.find((c) => (c as Mesh).isMesh) as Mesh | undefined;
-            if (firstChildMesh) maskGeo = firstChildMesh.geometry;
-          }
-        }
+        // Text HUD removed — no stencil/planes created
 
-        if (maskGeo) {
-          // (1) Write stencil where the glass silhouette is
-          const maskMat = new THREE.MeshBasicMaterial({
-            colorWrite: false,
-            depthWrite: false,
-          }) as StencilMaterial;
-          maskMat.stencilWrite = true;
-          maskMat.stencilRef = 1;
-          maskMat.stencilFunc = THREE.AlwaysStencilFunc;
-          maskMat.stencilZPass = THREE.ReplaceStencilOp;
-          maskMat.stencilZFail = THREE.KeepStencilOp;
-          maskMat.stencilFail = THREE.KeepStencilOp;
-
-          const maskMesh: Mesh = new THREE.Mesh(maskGeo.clone(), maskMat);
-          maskMesh.renderOrder = 1;
-          maskMesh.frustumCulled = false;
-          tiltNode.add(maskMesh);
-
-          // (2) Fixed-screen occluder plane
-          const occMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            depthTest: false,
-          }) as StencilMaterial;
-          occMat.stencilWrite = true;
-          occMat.stencilRef = 1;
-          occMat.stencilFunc = THREE.EqualStencilFunc;
-          occMat.stencilZPass = THREE.KeepStencilOp;
-          occMat.stencilZFail = THREE.KeepStencilOp;
-          occMat.stencilFail = THREE.KeepStencilOp;
-
-          const occ = new THREE.Mesh(new THREE.PlaneGeometry(PLANE_W, PLANE_H), occMat) as Mesh;
-          occ.renderOrder = 2;
-          occ.frustumCulled = false;
-          scene.add(occ);
-          occPlane = occ;
-          occPlane.name = 'HUD_OCC';
-
-          // (3) Text plane
-          // Create initial texture; actual sizing happens in scheduleLayoutHUD()
-          sumCanvas = document.createElement('canvas');
-          sumCanvas.width = 1024; sumCanvas.height = 512;
-          sumCtx = sumCanvas.getContext('2d');
-          if (sumCtx) {
-            sumCtx.clearRect(0,0,1024,512);
-          }
-          sumTex = new THREE.CanvasTexture(sumCanvas);
-          sumTex.colorSpace = THREE.SRGBColorSpace;
-
-          const sumMat = new THREE.MeshBasicMaterial({
-            map: sumTex,
-            transparent: true,
-            depthTest: false,
-          }) as StencilMaterial;
-          sumMat.stencilWrite = true;
-          sumMat.stencilRef = 1;
-          sumMat.stencilFunc = THREE.EqualStencilFunc;
-          sumMat.stencilZPass = THREE.KeepStencilOp;
-          sumMat.stencilZFail = THREE.KeepStencilOp;
-          sumMat.stencilFail = THREE.KeepStencilOp;
-
-          const textPlane = new THREE.Mesh(new THREE.PlaneGeometry(PLANE_W, PLANE_H), sumMat) as Mesh;
-          textPlane.renderOrder = 3;
-          textPlane.frustumCulled = false;
-          scene.add(textPlane);
-          maskedText = textPlane;
-          maskedText.name = 'HUD_TEXT';
-
-          // Observe SRKR element size so HUD updates when its vw-based font changes
-          const srkrEl = document.getElementById('srkrRef');
-          if (srkrEl) {
-            srkrRO = new ResizeObserver(() => {
-              // run on next frame to batch changes
-              requestAnimationFrame(() => scheduleLayoutHUD());
-            });
-            srkrRO.observe(srkrEl);
-          }
-
-          // Mark HUD ready and do initial layout now that planes and material exist
-          readyHUD = true;
-          scheduleLayoutHUD();
-
-          // Now that HUD is ready, attach ResizeObserver
-          resize();
-          ro = new ResizeObserver(() => {
-            if (resizeRaf) cancelAnimationFrame(resizeRaf);
-            resizeRaf = requestAnimationFrame(resize);
-          });
-          ro.observe(containerEl);
-
-          // Mark HUD planes & helpers
-          const hudPlanes = [occPlane, maskedText].filter(Boolean) as Mesh[];
-          for (const m of hudPlanes) {
-            m.userData = { ...m.userData, hud: true };
-          }
-          const sceneUserData = scene.userData as HUDUserData;
-          sceneUserData._hudPlanes = hudPlanes;
-
-          sceneUserData._placeHUD = () => {
-            const list = (scene.userData as HUDUserData)._hudPlanes ?? [];
-            for (const m of list) {
-              m.quaternion.copy(camera.quaternion);
-              m.position
-                .copy(camera.position)
-                .add(new THREE.Vector3(0, 0, -HUD_DISTANCE).applyQuaternion(camera.quaternion));
-            }
-          };
-
-          // After planes exist, compute their size to match SRKR height
-          scheduleLayoutHUD();
-        }
+        // Attach container ResizeObserver
+        resize();
+        ro = new ResizeObserver(() => {
+          if (resizeRaf) cancelAnimationFrame(resizeRaf);
+          resizeRaf = requestAnimationFrame(resize);
+        });
+        ro.observe(containerEl);
 
         // Fit camera to model
         const sphere: Sphere = new THREE.Sphere();
@@ -536,8 +369,6 @@ export default function HourglassHero(
       function tick() {
         if (shuttingDown || contextLost) { rafId = requestAnimationFrame(tick); return; }
         controls.update();
-        const placeHUD = (scene.userData as HUDUserData)._placeHUD;
-        if (placeHUD) placeHUD();
         try { renderer.render(scene, camera); } catch {}
 
         // After we have the model in scene and we painted at least one frame,
@@ -557,10 +388,15 @@ export default function HourglassHero(
         shuttingDown = true;
         if (rafId) cancelAnimationFrame(rafId);
         if (ro) ro.disconnect();
-        if (srkrRO) srkrRO.disconnect();
         renderer.domElement.removeEventListener('webglcontextlost', onContextLost, false);
         renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored, false);
         renderer.dispose();
+        try {
+          const c = renderer.domElement as HTMLCanvasElement;
+          c.removeEventListener('touchstart', touchGuard as any, true);
+          c.removeEventListener('touchmove', touchGuard as any, true);
+          c.removeEventListener('touchend', touchGuard as any, true);
+        } catch {}
         if (renderer.domElement?.parentElement) {
           renderer.domElement.parentElement.removeChild(renderer.domElement);
         }
@@ -573,58 +409,159 @@ export default function HourglassHero(
     };
   }, []);
 
+  // Parallax scroll effect - fade and scale hero elements as user scrolls
+  useEffect(() => {
+    const heroEl = heroRootRef.current;
+    const hostEl = hostRef.current;
+    if (!heroEl || !hostEl) return;
+
+    // Compute base scale for shorter viewports
+    let baseScale = 1;
+    const updateBaseScale = () => {
+      const vh = window.innerHeight;
+      if (vh < 560) baseScale = 0.78;
+      else if (vh < 960) baseScale = 0.8 + 0.2 * ((vh - 560) / 400);
+      else baseScale = 1;
+    };
+    updateBaseScale();
+
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      const heroSection = document.getElementById('hero');
+      const heroTop = heroSection?.offsetTop || 0;
+
+      // Progress: 0 at top, 1 after scrolling one viewport
+      const p = Math.max(0, Math.min(1, (scrollY - heroTop) / vh));
+
+      // Calculated values
+      const scale = baseScale * (1 - 0.15 * p);
+      const opacity = 1 - p;
+      const blur = p * 6;
+      const drift = p * 20;
+
+      // Apply to 3D canvas host
+      hostEl.style.transform = `scale(${scale.toFixed(3)})`;
+      hostEl.style.opacity = opacity.toFixed(3);
+      hostEl.style.filter = `blur(${blur.toFixed(1)}px)`;
+
+      // Apply to labels overlay
+      const overlay = overlayRef.current;
+      if (overlay) {
+        overlay.style.transform = `translateY(${drift.toFixed(1)}px) scale(${(1 - 0.15 * p).toFixed(3)})`;
+        overlay.style.opacity = opacity.toFixed(3);
+        overlay.style.filter = `blur(${blur.toFixed(1)}px)`;
+      }
+
+      // Apply to categories
+      const cats = categoriesRef.current;
+      if (cats) {
+        cats.style.transform = `scale(${(1 - 0.15 * p).toFixed(3)})`;
+        cats.style.opacity = opacity.toFixed(3);
+        cats.style.filter = `blur(${blur.toFixed(1)}px)`;
+      }
+
+      // Apply to chevron
+      const chev = chevronRef.current;
+      if (chev) {
+        chev.style.transform = `translateY(${drift.toFixed(1)}px) scale(${(1 - 0.15 * p).toFixed(3)})`;
+        chev.style.opacity = opacity.toFixed(3);
+        chev.style.filter = `blur(${blur.toFixed(1)}px)`;
+      }
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { updateBaseScale(); onScroll(); });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
   return (
     <section
-      className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-white"
+      ref={heroRootRef}
+      className="relative z-0 h-full w-full overflow-hidden bg-transparent"
       aria-label="Hourglass hero"
     >
-      {/* BIG SRKR. base layer */}
-      <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
+      {/* Left/Right labels - these are the targets for the loading animation */}
+      <div
+        ref={overlayRef}
+        className="absolute inset-0 flex items-center pointer-events-none select-none"
+        style={{ opacity: hideOverlays ? 0 : 1, transition: 'opacity .4s ease' }}
+      >
         <span
-          id="srkrRef"
-          className="text-[20vw] md:text-[16vw] font-extrabold tracking-tight text-black"
-          style={{
-            letterSpacing: '0.25em',
-            textTransform: 'uppercase',
-            fontFamily: 'Figtree, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-            fontWeight: 900,
-          }}
+          id="hero-label-left"
+          className="absolute left-[8%] sm:left-[10%] md:left-[12%] top-1/2 -translate-y-1/2 text-gray-900 tracking-[0.18em] uppercase text-xs sm:text-sm font-normal"
         >
           SRKR
         </span>
+        <span
+          id="hero-label-right"
+          className="absolute right-[8%] sm:right-[10%] md:right-[12%] top-1/2 -translate-y-1/2 text-gray-900 tracking-[0.18em] uppercase text-xs sm:text-sm font-normal"
+        >
+          PORTFOLIO
+        </span>
       </div>
 
-      {/* Canvas host (hidden until first painted frame with model) */}
+      {/* 3D Canvas container */}
       <div
-        ref={(el) => { containerRef.current = el; hostRef.current = el; }}
-        className="relative w-full h-[75vh] md:h-[85vh] lg:h-[92vh] max-w-none transition-opacity duration-200"
-        style={{ opacity: 0 }}
-      />
+        ref={hostRef}
+        className="relative w-full h-full will-change-transform transform-gpu"
+        style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+      >
+        <div ref={containerRef} className="absolute inset-0" />
+      </div>
 
-      {/* Bouncing arrow to next section (Projects) */}
-      <a
-        href="#about"
-        className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-[2000] text-black hover:text-indigo-600 focus:text-indigo-600 transition-colors"
-        aria-label="Scroll to About section"
-        onClick={(e) => {
-          e.preventDefault();
-          const el = document.getElementById('about');
-          if (!el) { window.location.hash = '#about'; return; }
-          const wrapperEl = document.querySelector('div.fixed.top-0');
-          const navH = wrapperEl
-            ? (wrapperEl as HTMLElement).getBoundingClientRect().height
-            : (document.querySelector('nav') as HTMLElement | null)?.getBoundingClientRect().height || 0;
-          const paddingTop = parseFloat(window.getComputedStyle(el).paddingTop || '0') || 0;
-          const y = el.getBoundingClientRect().top + window.scrollY + Math.min(40, paddingTop * 0.25) - navH;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+      {/* Category tags */}
+      <div
+        ref={categoriesRef}
+        className="absolute left-1/2 -translate-x-1/2 z-10 text-gray-900 bottom-24 sm:bottom-20 md:bottom-16"
+      >
+        {/* Mobile: stacked layout */}
+        <div className="sm:hidden flex flex-col items-center gap-1.5">
+          <ul className="flex items-center justify-center gap-2 tracking-[0.06em] uppercase text-[2.4vw] font-normal">
+            <li>[ mobile design ]</li>
+            <li>[ web design ]</li>
+            <li>[ creative design ]</li>
+          </ul>
+          <ul className="flex items-center justify-center gap-2 tracking-[0.06em] uppercase text-[2.4vw] font-normal">
+            <li>[ branding ]</li>
+            <li>[ motion graphics ]</li>
+          </ul>
+        </div>
+        {/* Tablet/Desktop: single line */}
+        <ul className="hidden sm:flex items-center justify-center gap-4 md:gap-6 tracking-[0.1em] uppercase text-[11px] md:text-xs font-normal">
+          <li>[ mobile design ]</li>
+          <li>[ web design ]</li>
+          <li>[ creative design ]</li>
+          <li>[ branding ]</li>
+          <li>[ motion graphics ]</li>
+        </ul>
+      </div>
+
+      {/* Scroll indicator */}
+      <button
+        ref={chevronRef}
+        type="button"
+        aria-label="Scroll to About"
+        className="absolute bottom-6 sm:bottom-5 md:bottom-4 left-1/2 -translate-x-1/2 z-10 text-gray-900/80 hover:text-indigo-600 focus:text-indigo-600 transition-colors duration-200"
+        onClick={() => {
+          const aboutEl = document.getElementById('about');
+          if (aboutEl) {
+            const y = aboutEl.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
         }}
       >
-        <div className="animate-bounce">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+        <span className="inline-block animate-bounce" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 md:w-7 md:h-7">
             <path d="M12 16.5a1 1 0 0 1-.7-.29l-6-6a1 1 0 1 1 1.4-1.42L12 14.09l5.3-5.3a1 1 0 0 1 1.4 1.42l-6 6a1 1 0 0 1-.7.29Z" />
           </svg>
-        </div>
-      </a>
+        </span>
+      </button>
     </section>
   );
 }

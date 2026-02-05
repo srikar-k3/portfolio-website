@@ -1,301 +1,205 @@
 'use client';
 
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import ProjectLayout, {
+  ProjectSection,
+  SectionTitle,
+  SectionText,
+  ProjectImage,
+} from '@/components/ProjectLayout';
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
 
 export default function LambdaTechServices() {
-  const [scrollY, setScrollY] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-  
-  const handleArrowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const container = document.getElementById('lambda-content');
-    if (!container) return;
-    const firstSection = container.querySelector('section');
-    const el = (firstSection as HTMLElement) || container;
-    const wrapperEl = document.querySelector('div.fixed.top-0');
-    const navbarHeight = wrapperEl
-      ? (wrapperEl as HTMLElement).getBoundingClientRect().height
-      : (document.querySelector('nav') as HTMLElement | null)?.getBoundingClientRect().height || 0;
-    const paddingTop = parseFloat(window.getComputedStyle(el).paddingTop || '0') || 0;
-    const y = el.getBoundingClientRect().top + window.scrollY + paddingTop - navbarHeight;
-    window.scrollTo({ top: y, behavior: 'smooth' });
-  };
   return (
-    <div className="min-h-screen text-white relative w-full max-w-full overflow-x-hidden" style={{background: 'linear-gradient(135deg, #000000 0%, #0d0d0d 50%, #000000 100%)'}}>
-      {/* Subtle noise overlay */}
-      <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='5.0' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-      }}></div>
+    <ProjectLayout
+      projectId="lambda-tech-services"
+      meta={{
+        title: 'Lambda Tech Services',
+        subtitle: 'A comprehensive brand identity and UI/UX design system positioning a premium technology consultancy for success in a competitive market.',
+        category: 'Brand Identity',
+        year: '2023',
+        client: 'Lambda Tech Services',
+        roles: ['Brand Identity', 'UI/UX Design', 'Prototyping', 'Design System', 'Flutter Development'],
+      }}
+      heroImage="/lambda_mockup_1.jpg"
+      heroAlt="Lambda Tech Services Brand Identity"
+    >
+      {/* Overview */}
+      <ProjectSection>
+        <SectionTitle>Overview</SectionTitle>
+        <SectionText>
+          <p>
+            Lambda Tech Services required a comprehensive brand identity and UI/UX design system that would position them as a premium technology consultancy. The project encompassed complete visual identity development, digital design systems, and collaborative development work.
+          </p>
+          <p>
+            Working directly with clients in an Agile environment, I created wireframes, interactive prototypes, and contributed Flutter development across multiple applications while establishing a cohesive brand presence that communicates technical expertise and reliability.
+          </p>
+        </SectionText>
+      </ProjectSection>
 
-      {/* Global mouse glow effect - behind all content */}
-      <div
-        className="fixed pointer-events-none z-0 transition-opacity duration-300"
-        style={{
-          left: mousePos.x - 75,
-          top: mousePos.y - 75,
-          width: 150,
-          height: 150,
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 60%)',
-          borderRadius: '50%',
-          filter: 'blur(30px)',
-        }}
-      />
-      {/* Navigation */}
-      <Navigation />
-      
-      {/* Full Width Hero Image */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="relative w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
-      >
-        <div 
-          className="h-full"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
+      {/* Logo Design */}
+      <ProjectSection delay={0.1}>
+        <SectionTitle>Logo Design</SectionTitle>
+        <SectionText>
+          <p>
+            The Lambda Tech Services logo combines mathematical precision with modern technology aesthetics. The lambda symbol (λ) represents functional programming and mathematical elegance—core principles in advanced software development.
+          </p>
+          <p>
+            I created multiple logo variations including horizontal, stacked, and icon-only versions to ensure versatility across all applications—from business cards to large-scale digital displays. The design maintains readability and impact at any size while establishing immediate recognition.
+          </p>
+        </SectionText>
+      </ProjectSection>
+
+      {/* Logo Display */}
+      <ProjectSection delay={0.15}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+          className="relative rounded-xl md:rounded-2xl overflow-hidden max-h-[70vh] max-w-[1100px] mx-auto"
+          style={{ backgroundColor: '#020025', aspectRatio: '16/10' }}
         >
-          <Image 
-            src="/lambda_mockup_1.jpg" 
-            alt="Lambda Tech Services Brand Identity" 
-            width={1920} 
-            height={1080}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-black/30 to-black/60" />
-        <a href="#lambda-content" onClick={handleArrowClick} aria-label="Scroll to content" className="absolute left-1/2 -translate-x-1/2 bottom-6 text-white/80 hover:text-white transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 animate-bounce">
-            <path d="M12 16.5a1 1 0 0 1-.7-.29l-6-6a1 1 0 1 1 1.4-1.42L12 14.09l5.3-5.3a1 1 0 0 1 1.4 1.42l-6 6a1 1 0 0 1-.7.29Z" />
-          </svg>
-        </a>
-      </motion.section>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Image
+              src="/lambdaPFP.png"
+              alt="Lambda Tech Services Logo"
+              width={600}
+              height={600}
+              className="w-[50%] md:w-[45%] h-auto object-contain"
+            />
+          </div>
+        </motion.div>
+      </ProjectSection>
 
-      <main className="px-6 md:px-12">
-        <div className="max-w-[1300px] mx-auto" id="lambda-content">
-          {/* Overview */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid md:grid-cols-12 gap-12 items-start pt-[144px] pb-[72px]"
-          >
-            <div className="md:col-span-8">
-              <h3 className="text-2xl font-semibold text-white mb-3 text-left">Overview</h3>
-              <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
-                Lambda Tech Services required a comprehensive brand identity and UI/UX design system that would position them as a premium technology consultancy. The project encompassed complete visual identity development, digital design systems, and collaborative development work.
-              </p>
-              <p className="text-gray-300 text-[20px] leading-relaxed">
-                Working directly with clients in an Agile environment, I created wireframes, interactive prototypes, and contributed Flutter development across multiple applications while establishing a cohesive brand presence that communicates technical expertise and reliability.
-              </p>
-            </div>
-            <div className="md:col-span-4">
-              <div className="mb-7">
-                <p className="text-[20px] text-white/90">Client</p>
-                <p className="text-[20px] text-white/60 mt-1">Lambda Tech Services</p>
-              </div>
-              <div className="flex flex-wrap gap-x-3 gap-y-3">
-                {['Brand Identity','UI/UX Design','Prototyping','Design System','Development'].map((label) => (
-                  <span key={label} className="inline-flex items-center rounded-full border border-white/20 text-white/80 text-xs tracking-wide px-3 py-1">{label}</span>
-                ))}
-              </div>
-            </div>
-          </motion.section>
+      {/* Color Palette */}
+      <ProjectSection delay={0.2}>
+        <SectionTitle>Color Palette</SectionTitle>
+        <SectionText className="mb-8">
+          <p>
+            The color system balances professionalism with modern energy. Rich Black provides a sophisticated foundation, while Red Orange adds dynamic accent points that draw attention without overwhelming.
+          </p>
+        </SectionText>
 
-          {/* Logo Design (text) */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
-            className="py-[72px]"
-          >
-            <div className="grid md:grid-cols-12">
-              <div className="md:col-span-8">
-                <h3 className="text-2xl font-semibold text-white mb-3">Logo Design</h3>
-                <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
-                  The Lambda Tech Services logo combines mathematical precision with modern technology aesthetics. The lambda symbol (λ) represents functional programming and mathematical elegance, core principles in advanced software development.
-                </p>
-                <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
-                  Created multiple logo variations including horizontal, stacked, and icon-only versions to ensure versatility across all applications — from business cards to large-scale digital displays.
-                </p>
-                <p className="text-gray-300 text-[20px] leading-relaxed">
-                  The design maintains readability and impact at any size while establishing immediate recognition in the competitive tech consultancy landscape.
-                </p>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+          className="rounded-xl md:rounded-2xl overflow-hidden"
+        >
+          <div className="flex group" style={{ aspectRatio: '4/1' }}>
+            <div
+              className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100"
+              style={{ backgroundColor: '#020025' }}
+            >
+              <div className="text-sm md:text-lg font-medium">#020025</div>
+              <div className="text-xs md:text-sm opacity-80 mt-1">Rich Black</div>
             </div>
-          </motion.section>
-
-          {/* Logo Design (image) */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
-            className="py-[72px]"
-          >
-            <div className="grid md:grid-cols-12">
-              <div className="md:col-span-12">
-                <div className="md:col-span-12 rounded-xl flex items-center justify-center h-[85vh]" style={{ backgroundColor: '#020025' }}>
-                  <Image 
-                    src="/lambdaPFP.png" 
-                    alt="Lambda Tech Services Logo"
-                    width={1600}
-                    height={1600}
-                    className="w-[55%] md:w-[65%] h-auto max-h-[70%] object-contain"
-                  />
-                </div>
-              </div>
+            <div
+              className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100"
+              style={{ backgroundColor: '#61727d' }}
+            >
+              <div className="text-sm md:text-lg font-medium">#61727d</div>
+              <div className="text-xs md:text-sm opacity-80 mt-1">Slate Gray</div>
             </div>
-          </motion.section>
-
-          {/* Color Palette - Title */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
-            className="py-[72px]"
-          >
-            <h3 className="text-2xl font-semibold text-white text-left">Color Palette</h3>
-          </motion.section>
-        </div>
-      </main>
-
-      {/* Full Width Color Palette Display */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-        className="w-full py-[72px]"
-      >
-        <div className="px-6 md:px-12">
-          <div className="max-w-[1300px] mx-auto">
-            <div className="bg-gray-200 aspect-[4/1] rounded-xl overflow-hidden">
-              <div className="w-full h-full flex group">
-            {/* Rich Black */}
-            <div className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100" style={{backgroundColor: '#020025'}}>
-              <div className="text-lg font-medium transition-all duration-300 hover:scale-110">#020025</div>
-              <div className="text-sm opacity-90 transition-all duration-300 hover:scale-110">Rich Black</div>
+            <div
+              className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100"
+              style={{ backgroundColor: '#e86637' }}
+            >
+              <div className="text-sm md:text-lg font-medium">#e86637</div>
+              <div className="text-xs md:text-sm opacity-80 mt-1">Red Orange</div>
             </div>
-            {/* Slate Gray */}
-            <div className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100" style={{backgroundColor: '#61727d'}}>
-              <div className="text-lg font-medium transition-all duration-300 hover:scale-110">#61727d</div>
-              <div className="text-sm opacity-90 transition-all duration-300 hover:scale-110">Slate Gray</div>
-            </div>
-            {/* Red Orange */}
-            <div className="flex-1 flex flex-col items-center justify-center text-white cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100" style={{backgroundColor: '#e86637'}}>
-              <div className="text-lg font-medium transition-all duration-300 hover:scale-110">#e86637</div>
-              <div className="text-sm opacity-90 transition-all duration-300 hover:scale-110">Red Orange</div>
-            </div>
-            {/* Ghost White */}
-            <div className="flex-1 flex flex-col items-center justify-center text-[#020025] cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100" style={{backgroundColor: '#fbf7f8'}}>
-              <div className="text-lg font-medium transition-all duration-300 hover:scale-110">#fbf7f8</div>
-              <div className="text-sm opacity-90 transition-all duration-300 hover:scale-110">Ghost White</div>
-            </div>
-              </div>
+            <div
+              className="flex-1 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group-hover:opacity-50 hover:!opacity-100"
+              style={{ backgroundColor: '#fbf7f8', color: '#020025' }}
+            >
+              <div className="text-sm md:text-lg font-medium">#fbf7f8</div>
+              <div className="text-xs md:text-sm opacity-80 mt-1">Ghost White</div>
             </div>
           </div>
+        </motion.div>
+      </ProjectSection>
+
+      {/* Typography */}
+      <ProjectSection delay={0.25}>
+        <SectionTitle>Typography</SectionTitle>
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+            className="p-6 md:p-8 rounded-xl md:rounded-2xl bg-white/[0.02] border border-white/10"
+          >
+            <h4 className="text-lg md:text-xl font-medium text-white mb-6">Primary Font</h4>
+            <div className="space-y-3">
+              <div className="text-3xl md:text-4xl font-bold text-white">Inter Bold</div>
+              <div className="text-xl md:text-2xl font-semibold text-white/80">Inter Semibold</div>
+              <div className="text-lg font-medium text-white/60">Inter Medium</div>
+              <div className="text-base font-normal text-white/50">Inter Regular</div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASE_OUT_EXPO }}
+            className="p-6 md:p-8 rounded-xl md:rounded-2xl bg-white/[0.02] border border-white/10"
+          >
+            <h4 className="text-lg md:text-xl font-medium text-white mb-6">Usage Guidelines</h4>
+            <div className="space-y-3 text-sm">
+              <p className="text-white/60">
+                <span className="font-semibold text-white/90">Headlines:</span> Inter Bold, 32-48px
+              </p>
+              <p className="text-white/60">
+                <span className="font-semibold text-white/90">Subheadings:</span> Inter Semibold, 20-28px
+              </p>
+              <p className="text-white/60">
+                <span className="font-semibold text-white/90">Body Text:</span> Inter Regular, 16-18px
+              </p>
+              <p className="text-white/60">
+                <span className="font-semibold text-white/90">Captions:</span> Inter Medium, 12-14px
+              </p>
+            </div>
+          </motion.div>
         </div>
-      </motion.section>
+      </ProjectSection>
 
-      <main className="px-6 md:px-12">
-        <div className="max-w-[1300px] mx-auto">
-          {/* Typography Section */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="py-[72px]"
-          >
-            <h3 className="text-2xl font-semibold text-white mb-6 text-left">Typography</h3>
-            <div className="grid md:grid-cols-2 gap-12">
-              <div className="bg-black/30 backdrop-blur-sm border border-white/10 p-8 rounded-xl">
-                <h4 className="text-2xl font-medium text-white mb-6">Primary Font</h4>
-                <div className="space-y-4">
-                  <div className="text-4xl font-bold text-white">Inter Bold</div>
-                  <div className="text-2xl font-semibold text-gray-200">Inter Semibold</div>
-                  <div className="text-lg font-medium text-gray-300">Inter Medium</div>
-                  <div className="text-base font-normal text-gray-400">Inter Regular</div>
-                </div>
-              </div>
-              <div className="bg-black/30 backdrop-blur-sm border border-white/10 p-8 rounded-xl">
-                <h4 className="text-2xl font-medium text-white mb-6">Usage Guidelines</h4>
-                <div className="space-y-3">
-                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Headlines:</span> Inter Bold, 32-48px</p>
-                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Subheadings:</span> Inter Semibold, 20-28px</p>
-                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Body Text:</span> Inter Regular, 16-18px</p>
-                  <p className="text-gray-300 text-sm"><span className="font-semibold text-white">Captions:</span> Inter Medium, 12-14px</p>
-                </div>
-              </div>
-            </div>
-          </motion.section>
+      {/* Website Design */}
+      <ProjectSection delay={0.3}>
+        <SectionTitle>Website Design</SectionTitle>
+        <SectionText>
+          <p>
+            Designed and prototyped a comprehensive website experience that showcases Lambda Tech Services&apos; technical capabilities while maintaining user-friendly navigation and clear service communication.
+          </p>
+          <p>
+            The design system emphasizes clean layouts, strategic use of whitespace, and intuitive information architecture that converts visitors into qualified leads. Created detailed wireframes and interactive prototypes that guided the development process.
+          </p>
+        </SectionText>
+      </ProjectSection>
 
-          {/* Website Design Section */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-            className="py-[72px]"
-          >
-            <div className="grid md:grid-cols-12">
-              <div className="md:col-span-8">
-                <h3 className="text-2xl font-semibold text-white mb-3">Website Design</h3>
-                <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
-                Designed and prototyped a comprehensive website experience that showcases Lambda Tech Services&apos; technical capabilities while maintaining user-friendly navigation and clear service communication.
-                </p>
-                <p className="text-gray-300 text-[20px] leading-relaxed mb-4">
-                Created detailed wireframes and interactive prototypes that guided the development process, ensuring seamless user experience across all devices and touchpoints.
-                </p>
-                <p className="text-gray-300 text-[20px] leading-relaxed">
-                The design system emphasizes clean layouts, strategic use of whitespace, and intuitive information architecture that converts visitors into qualified leads.
-                </p>
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Website Design (image) */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
-            className="py-[72px]"
-          >
-            <div className="grid md:grid-cols-12">
-              <div className="md:col-span-12">
-                <div className="rounded-xl overflow-hidden h-[85vh]" style={{ backgroundColor: '#020025' }}>
-                  <Image 
-                    src="/lambda_website_mockup.jpg" 
-                    alt="Lambda Tech Services Website Mockup" 
-                    width={1600} 
-                    height={1200} 
-                    className="w-full h-full object-cover object-[50%_46%] md:object-[50%_58%] lg:object-[50%_64%]" 
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.section>
-
-        </div>
-      </main>
-      
-      {/* Footer */}
-      <Footer />
-    </div>
+      <ProjectSection delay={0.35}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+          className="relative rounded-xl md:rounded-2xl overflow-hidden max-h-[70vh] max-w-[1100px] mx-auto"
+          style={{ backgroundColor: '#020025', aspectRatio: '16/10' }}
+        >
+          <Image
+            src="/lambda_website_mockup.jpg"
+            alt="Lambda Tech Services Website Mockup"
+            fill
+            className="object-cover object-[50%_55%]"
+            sizes="(max-width: 768px) 100vw, 1300px"
+          />
+        </motion.div>
+      </ProjectSection>
+    </ProjectLayout>
   );
 }
