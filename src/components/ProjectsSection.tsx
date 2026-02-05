@@ -148,7 +148,7 @@ export default function ProjectsSection() {
     const top = rect.top + window.scrollY;
     const vh = window.innerHeight || 1;
     const height = wrapper.offsetHeight || rect.height || vh * (allowed.length + 1);
-    const span = Math.max(1, height - vh); // total scrollable distance of track
+    const _span = Math.max(1, height - vh); // total scrollable distance of track
 
     // Our mapping compresses stepping into the first 90% of progress.
     // Aim for the center of the target bucket within that 90%.

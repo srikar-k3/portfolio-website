@@ -21,7 +21,6 @@ import type {
 } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-type HUDUserData = Record<string, unknown>;
 
 export default function HourglassHero(
   { onLoaded, onProgress, hideOverlays }: { onLoaded?: () => void; onProgress?: (pct: number) => void; hideOverlays?: boolean } = {}

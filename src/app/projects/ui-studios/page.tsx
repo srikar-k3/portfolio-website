@@ -37,7 +37,7 @@ function BeforeAfterSlider() {
     document.addEventListener('mouseup', onUp);
   };
 
-  const handleTouchStart = (_e: React.TouchEvent) => {
+  const handleTouchStart = () => {
     const container = sliderRef.current;
     if (!container) return;
     const rect = container.getBoundingClientRect();

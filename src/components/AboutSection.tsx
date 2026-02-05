@@ -64,7 +64,7 @@ export default function AboutSection() {
           {/* Content with staggered entrance */}
           <div className="space-y-6 md:space-y-8">
             <p className={`text-gray-300 text-[17px] sm:text-[19px] md:text-[21px] leading-[1.8] transition-all duration-700 ease-out delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-              With a B.S. in Computer Science, I've always carried an equal pull toward art, and the
+              With a B.S. in Computer Science, I&apos;ve always carried an equal pull toward art, and the
               blend of those interests naturally evolved into a passion for
               {' '}
               <span className="relative inline-block">
